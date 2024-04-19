@@ -103,9 +103,24 @@ class MaximumCutProblem:
                         flag = 1
 
             return MaximumCutProblem(edges,n_vertices)
+    
+    def test_advantage(number_of_nodes):
+        graph = nx.fast_gnp_random_graph(number_of_nodes,0.5)
+        problem = MaximumCutProblem(graph)
+        problem.prepare()
+        response = problem.sample_advantage(100)
+        problem.print_result(response)
+
+    def test_hybrid(number_of_nodes):
+        graph = nx.fast_gnp_random_graph(number_of_nodes,0.5)
+        problem = MaximumCutProblem(graph)
+        problem.prepare()
+        response = problem.sample_hybrid()
+        problem.print_result(response)
                       
 
     def print_result(self,response):
+        print("Sono qui")
         lut = response.first.sample
         for i in range(1, int(self.v) + 1, 1):
             if i not in lut:
