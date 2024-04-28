@@ -6,6 +6,7 @@ from dwave.system import LeapHybridSampler
 from collections import defaultdict 
 import networkx as nx
 import dimod
+import matplotlib.pyplot as plt
 
 
 def find_all_partitions(node_list):
@@ -134,6 +135,8 @@ class MaximumCutProblem:
     def solve_classically(graph):
         if not isinstance(graph,  nx.classes.graph.Graph):
             raise TypeError("A networkx graph is required")
+        nx.draw(graph)
+        plt.show()
         max_cut_size = 0
         max_partition = None
         partitions = find_all_partitions(sorted(graph.nodes))

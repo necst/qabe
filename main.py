@@ -18,5 +18,10 @@ problem.print_result(response)
 
 #maximumCut.MaximumCutProblem.test_advantage(100)
 
-graph = nx.fast_gnp_random_graph(10,0.5)
+#graph = nx.fast_gnp_random_graph(10,0.5)
+graph = nx.Graph()
+nodes = range(7)
+graph.add_nodes_from(nodes)
+edges = [(0, 1), (0, 2), (1, 2), (1, 3), (2, 3), (3, 4), (5, 6), (0, 6)]
+graph.add_edges_from(edges)
 maximumCut.MaximumCutProblem.solve_classically(graph)
