@@ -7,6 +7,19 @@ from collections import defaultdict
 import networkx as nx
 import dimod
 
+
+def find_all_partitions(node_list):
+    if len(node_list) == 0:
+        return [[]]
+    partitions = []
+    node = node_list.pop()
+    smaller_partitions = find_all_partitions(node_list)
+    for subset in smaller_partitions:
+        partitions.append(subset)
+        partitions.append(subset + [node])
+    return partitions
+
+
 class MaximumCutProblem:
     """
     This class represents a Maximum Cut problem.
@@ -117,10 +130,35 @@ class MaximumCutProblem:
         problem.prepare()
         response = problem.sample_hybrid()
         problem.print_result(response)
-                      
+
+    def solve_classically(graph):
+        if not isinstance(graph,  nx.classes.graph.Graph):
+            raise TypeError("A networkx graph is required")
+        max_cut_size = 0
+        max_partition = None
+        partitions = find_all_partitions(sorted(graph.nodes))
+        for partition in partitions:
+            cut_size = nx.algorithms.cuts.cut_size(graph, partition)
+            if cut_size > max_cut_size:
+                max_cut_size = cut_size
+                max_partition = partition
+
+        print("The solution is: ")
+
+        print("{", end = "")
+        sorted_nodes = sorted(graph.nodes)
+        for node in sorted_nodes:
+            if node in max_partition and node+1 in sorted_nodes:
+                print("%s: %s" % (node, 1), end = ", ")
+            elif node in max_partition and node+1 not in sorted_nodes:
+                print("%s: %s" % (node, 1), end = "")
+            elif node not in max_partition and node+1 in sorted_nodes:
+                print("%s: %s" % (node, 0), end = ", ")
+            elif node not in max_partition and node+1 not in sorted_nodes:
+                print("%s: %s" % (node, 0), end = "")
+        print("}")         
 
     def print_result(self,response):
-        print("Sono qui")
         lut = response.first.sample
         for i in range(1, int(self.v) + 1, 1):
             if i not in lut:

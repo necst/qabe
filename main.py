@@ -16,4 +16,7 @@ response = problem.sample_advantage(100)
 problem.print_result(response)
 '''
 
-maximumCut.MaximumCutProblem.test_advantage(90)
+#maximumCut.MaximumCutProblem.test_advantage(100)
+
+graph = nx.fast_gnp_random_graph(10,0.5)
+maximumCut.MaximumCutProblem.solve_classically(graph)
