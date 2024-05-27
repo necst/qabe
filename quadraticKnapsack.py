@@ -3,7 +3,8 @@ from dwave.system import EmbeddingComposite
 from dwave.embedding.chain_strength import *
 from dwave.system import DWaveSampler
 from dwave.system import LeapHybridSampler
-from collections import defaultdict 
+from collections import defaultdict
+import re
 
 def squared_pol(coeff):
 
@@ -12,7 +13,7 @@ def squared_pol(coeff):
 
   #squared terms(a_i^2)
   for i in range(n):
-    squared_coeff[f"x{i+1}^2"] = coeff[i] * coeff[i]
+    squared_coeff[f"x{i+1}@2"] = coeff[i] * coeff[i]
 
   #cross terms(a_i * a_j)
   for i in range(n):
@@ -66,33 +67,55 @@ class quadraticKnapsackProblem:
        for i in range(len(self.p)):
             for j in range(len(self.p[i])):
                 self.q[(i,j)] += self.p[i][j]
-                self.q[(j,i)] += self.p[i][j]
+                if i!=j:
+                  self.q[(j,i)] += self.p[i][j]
        
        #computing weights coefficient
        weights = self.w
 
-       weights.pop
-
-       #square the weights obtaining a dictionary
-
-
-       for i in range(len(weights)):
-           weights[i] = -self.pen * weights[i];
-
-       constant = weights.pop()
+       print(self.q)
+       #adding slack variables
+       boundary = weights.pop()
        weights.append(1)
        weights.append(2)
-       weights.append(constant)
+       weights.append(boundary)
 
-       constant = constant * constant;
+       #square the weights obtaining a dictionary
+       w_dict = squared_pol(weights)
 
-       for m in range(len(weights)):
-           for n in range(m, len(weights)):
-               if m != len(weights) - 1 and n != len(weights) - 1:
-                   self.q[(m,n)] -= (weights[m] * weights[n]) * self.pen
+       for key in w_dict.keys():
+           w_dict[key] = -self.pen * w_dict[key];
+
+       print(w_dict)
+       #here the constant is already negative
+       constant = w_dict["c^2"]
+
+       for term,coefficient in w_dict.items():
+          if (re.match(r'x(\d)x(\d)',term)):
+             match = re.match(r'x(\d)x(\d)',term)
+             row = int(match.group(1)) - 1
+             col = int(match.group(2)) - 1
+
+             #adding the corresponding term to the Q matrix
+             self.q[(row,col)] = self.q[(row,col)] + coefficient
+             self.q[(col,row)] = self.q[(col,row)] + coefficient
+
+          elif (re.match(r'x(\d)@2', term)):
+             match = re.match(r'x(\d)@2',term)
+             index = int(match.group(1)) - 1
             
+             #adding the corresponding term to the Q matrix
+             self.q[(index,index)] = self.q[(index,index)] + coefficient
+
+          elif (re.match(r'x(\d)c', term)):      
+             match = re.match(r'x(\d)c',term)
+             index = int(match.group(1)) - 1
+             
+             #subtracting the corresponding term to the Q matrix
+             #because we didnt account for the minus before
+             self.q[(index,index)] = self.q[(index,index)] - coefficient
     
        for key in self.q.keys():
-           self.q[key] -= constant
+           self.q[key] += constant
 
        print(self.q)
