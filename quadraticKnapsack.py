@@ -73,7 +73,6 @@ class quadraticKnapsackProblem:
        #computing weights coefficient
        weights = self.w
 
-       print(self.q)
        #adding slack variables
        boundary = weights.pop()
        weights.append(1)
@@ -86,7 +85,6 @@ class quadraticKnapsackProblem:
        for key in w_dict.keys():
            w_dict[key] = -self.pen * w_dict[key];
 
-       print(w_dict)
        #here the constant is already negative
        constant = w_dict["c^2"]
 
@@ -118,4 +116,35 @@ class quadraticKnapsackProblem:
        for key in self.q.keys():
            self.q[key] += constant
 
-       print(self.q)
+    def sample_advantage(self, num_of_reads, chain_strength = None):
+
+        sampler = EmbeddingComposite(DWaveSampler())
+
+        if chain_strength == None:
+            chain_strength = uniform_torque_compensation(dimod.BinaryQuadraticModel.from_qubo(self.q, offset = 0.0), sampler)
+
+        print("Computing results on advantage...")
+
+        sample_set = sampler.sample_qubo(self.q,
+                               chain_strength=chain_strength,
+                               num_reads=num_of_reads,
+                               label='Maximum Cut')
+        return sample_set
+    
+    def print_result(self,response):
+        lut = response.first.sample
+        for i in range(1, len(self.w) - 1, 1):
+            if i not in lut:
+                lut[i] = 0
+            elif ((i == len(self.w) - 2) or (i == len(self.w) - 3)) and (i in lut):
+                lut[i] = -99
+
+        print("The solution is: ")
+
+        print("{", end = "")
+        for key in sorted(lut):
+            if key + 1 in lut:
+                print("%s: %s" % (key, lut[key]), end = ", ")
+            else:
+                print("%s: %s" % (key, lut[key]), end = "")  
+        print("}")
