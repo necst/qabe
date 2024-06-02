@@ -55,7 +55,7 @@ class MaximumCutProblem:
         for i in range(len(self.e)):
             self.q[(self.e[i][0],self.e[i][0])] += -1
             self.q[(self.e[i][1],self.e[i][1])] += -1
-            self.q[(self.e[i][0],self.e[i][1])] += 2 
+            self.q[(self.e[i][0],self.e[i][1])] += 2
     
     def sample_advantage(self, num_of_reads, chain_strength = None):
 

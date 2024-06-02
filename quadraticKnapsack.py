@@ -24,7 +24,7 @@ def squared_pol(coeff):
   for i in range(n):
     squared_coeff[f"x{i+1}c"] = 2 * coeff[i] * coeff[-1]
 
-  # Calcola il quadrato della costante (c^2)
+  #constant squared (c^2)
   squared_coeff["c^2"] = coeff[-1] ** 2
 
   return squared_coeff
@@ -66,9 +66,10 @@ class quadraticKnapsackProblem:
        #adding the profits
        for i in range(len(self.p)):
             for j in range(len(self.p[i])):
-                self.q[(i,j)] += self.p[i][j]
-                if i!=j:
-                  self.q[(j,i)] += self.p[i][j]
+                if j >= i:
+                    self.q[(i,j)] += self.p[i][j]
+                    if i!=j:
+                        self.q[(j,i)] += self.p[i][j]
        
        #computing weights coefficient
        weights = self.w
@@ -83,7 +84,7 @@ class quadraticKnapsackProblem:
        w_dict = squared_pol(weights)
 
        for key in w_dict.keys():
-           w_dict[key] = -self.pen * w_dict[key];
+           w_dict[key] = -self.pen * w_dict[key]
 
        #here the constant is already negative
        constant = w_dict["c^2"]
@@ -95,8 +96,9 @@ class quadraticKnapsackProblem:
              col = int(match.group(2)) - 1
 
              #adding the corresponding term to the Q matrix
-             self.q[(row,col)] = self.q[(row,col)] + coefficient
-             self.q[(col,row)] = self.q[(col,row)] + coefficient
+             if (col >= row):
+                self.q[(row,col)] = self.q[(row,col)] + coefficient
+                self.q[(col,row)] = self.q[(col,row)] + coefficient
 
           elif (re.match(r'x(\d)@2', term)):
              match = re.match(r'x(\d)@2',term)
@@ -108,13 +110,27 @@ class quadraticKnapsackProblem:
           elif (re.match(r'x(\d)c', term)):      
              match = re.match(r'x(\d)c',term)
              index = int(match.group(1)) - 1
-             
+            
              #subtracting the corresponding term to the Q matrix
              #because we didnt account for the minus before
              self.q[(index,index)] = self.q[(index,index)] - coefficient
     
-       for key in self.q.keys():
-           self.q[key] += constant
+       keys_to_delete = [(i, j) for (i, j) in self.q if j < i]
+
+       for key in keys_to_delete:
+            del self.q[key]
+
+       #making Q an upper diagonal matrix (and) for a minimaztion problem
+       for (i, j) in self.q.keys():
+            if j < i:
+                self.q[(i, j)] = 0
+            elif j > i:
+                self.q[(i, j)] *= -2
+            else:
+                self.q[(i, j)] *= -1
+
+       print(self.q)
+
 
     def sample_advantage(self, num_of_reads, chain_strength = None):
 
@@ -133,18 +149,22 @@ class quadraticKnapsackProblem:
     
     def print_result(self,response):
         lut = response.first.sample
+        print(lut)
+        '''
+        lut = response.first.sample
         for i in range(1, len(self.w) - 1, 1):
             if i not in lut:
                 lut[i] = 0
             elif ((i == len(self.w) - 2) or (i == len(self.w) - 3)) and (i in lut):
-                lut[i] = -99
+                del lut[i]
 
         print("The solution is: ")
 
         print("{", end = "")
         for key in sorted(lut):
             if key + 1 in lut:
-                print("%s: %s" % (key, lut[key]), end = ", ")
+                print("%s: %s" % (key + 1, lut[key]), end = ", ")
             else:
-                print("%s: %s" % (key, lut[key]), end = "")  
+                print("%s: %s" % (key + 1, lut[key]), end = "")  
         print("}")
+'''
