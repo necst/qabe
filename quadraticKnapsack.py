@@ -114,18 +114,11 @@ class quadraticKnapsackProblem:
              #subtracting the corresponding term to the Q matrix
              #because we didnt account for the minus before
              self.q[(index,index)] = self.q[(index,index)] - coefficient
-    
-       keys_to_delete = [(i, j) for (i, j) in self.q if j < i]
-
-       for key in keys_to_delete:
-            del self.q[key]
 
        #making Q an upper diagonal matrix (and) for a minimaztion problem
        for (i, j) in self.q.keys():
             if j < i:
                 self.q[(i, j)] = 0
-            elif j > i:
-                self.q[(i, j)] *= -2
             else:
                 self.q[(i, j)] *= -1
 
@@ -144,13 +137,10 @@ class quadraticKnapsackProblem:
         sample_set = sampler.sample_qubo(self.q,
                                chain_strength=chain_strength,
                                num_reads=num_of_reads,
-                               label='Maximum Cut')
+                               label='Quadratic Knapsack')
         return sample_set
     
     def print_result(self,response):
-        lut = response.first.sample
-        print(lut)
-        '''
         lut = response.first.sample
         for i in range(1, len(self.w) - 1, 1):
             if i not in lut:
@@ -167,4 +157,10 @@ class quadraticKnapsackProblem:
             else:
                 print("%s: %s" % (key + 1, lut[key]), end = "")  
         print("}")
-'''
+
+
+
+    #TODO: Cambiare questa forma o l'altra
+
+    def solve_classically(self):
+        
