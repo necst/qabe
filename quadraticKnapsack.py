@@ -5,6 +5,7 @@ from dwave.system import DWaveSampler
 from dwave.system import LeapHybridSampler
 from collections import defaultdict
 import re
+import itertools
 
 def squared_pol(coeff):
 
@@ -159,8 +160,40 @@ class quadraticKnapsackProblem:
         print("}")
 
 
+    def solve_classically(profits,weights):
 
-    #TODO: Cambiare questa forma o l'altra
+        capacity = weights.pop()
+        n = len(profits[0])
 
-    def solve_classically(self):
-        
+        best_profit = 0
+        best_combination = None
+
+        #check all possible combinations
+        for combination in itertools.product([0, 1], repeat=n):
+            
+            total_weight = sum(weights[i] for i, selected in enumerate(combination) if selected == 1)
+
+            #iterate only if the capacity constraint is respected
+            if total_weight <= capacity:
+
+                total_profit = 0
+                for i in range(n):
+                    if combination[i] == 1:
+                        total_profit += profits[i][i]
+                        for j in range(i+1, n):
+                            if combination[j] == 1:
+                                total_profit += profits[i][j]
+
+                #check if this combination has a better profit
+                if total_profit > best_profit:
+                    best_profit = total_profit
+                    best_combination = combination
+
+        print('The solution is:')
+        print("{", end = "")
+        for i in range(len(best_combination)):
+            if i + 1  <= len(best_combination):
+                print("%s: %s" % (i + 1, best_combination[i]), end = ", ")
+            else:
+                print("%s: %s" % (i + 1, best_combination[i]), end = "")
+        print("}")
