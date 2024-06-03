@@ -28,28 +28,38 @@ class MaximumCutProblem:
     of vertices V in two complementary subsets S and T such
     that the number of edges between S and T is as large as possible
     """
-    def __init__(self, edges, vertices_num):
+    def __init__(self, edges=None, vertices_num=None, graph = None):
         """
         Constructor of the MaximumCutProblem class.
         Params:
         edges: edges of the graph
         vertices_num: number of vertices in the graph
         """
-        self.e = edges
-        self.v = vertices_num
-        self.q = defaultdict(int)
 
-    def __init__(self, graph):
+        if edges == None and vertices_num == None and graph != None:
+            if not isinstance(graph,  nx.classes.graph.Graph):
+                raise TypeError("A Networkx graph is required")
+            
+            self.v = graph.number_of_nodes()
+            edges = []
+            for u,v in graph.edges(data=False):
+                edges.append([int(u),int(v)])
+            self.e = edges
+            self.q = defaultdict(int)
 
-        if not isinstance(graph,  nx.classes.graph.Graph):
-            raise TypeError("A networkx graph is required")
+        elif edges != None and vertices_num != None and graph == None:
+            self.e = edges
+            self.v = vertices_num
+            self.q = defaultdict(int)
+        else:
+            raise TypeError("Specify the arguments in one of the two formats: (None,None,graph) or (edges,vertices_number,None)")
 
-        self.v = graph.number_of_nodes()
-        edges = []
-        for u,v in graph.edges(data=False):
-            edges.append([int(u),int(v)])
-        self.e = edges
-        self.q = defaultdict(int)
+
+        
+
+    #def __init__(self, graph):
+
+        
 
     def prepare(self):
         for i in range(len(self.e)):
