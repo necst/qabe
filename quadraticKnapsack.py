@@ -6,6 +6,7 @@ from dwave.system import LeapHybridSampler
 from collections import defaultdict
 import re
 import itertools
+import random
 
 def squared_pol(coeff):
 
@@ -141,13 +142,42 @@ class quadraticKnapsackProblem:
                                label='Quadratic Knapsack')
         return sample_set
     
+    
+    def sample_hybrid(self):
+
+        sampler = LeapHybridSampler()
+
+        sample_set = sampler.sample_qubo(self.q, label="Maximum_Cut")
+
+        return sample_set
+    
+
+    def test_advantage(number_of_variables):
+        if (number_of_variables <= 1):
+            raise TypeError("The number of variables must be at least 2")
+        penalty = 10
+        profits = [[random.randint(0, 10) for i in range(number_of_variables)] for j in range(number_of_variables)]
+        #Set to have at least weight one for each 
+        weights = [random.randint(1, 10) for i in range(number_of_variables)]
+        capacity = random.randint((number_of_variables - 1) * 3, number_of_variables * 3)
+        weights.append(capacity)
+        print(weights)
+        problem = quadraticKnapsackProblem(profits,weights,penalty)
+        #problem.prepare()
+        #response = problem.sample_advantage(100)
+        #problem.print_result(response)
+
     def print_result(self,response):
         lut = response.first.sample
-        for i in range(1, len(self.w) - 1, 1):
+        print(lut)
+        for i in range(0, len(self.w) - 1, 1):
+            print(i)
             if i not in lut:
                 lut[i] = 0
             elif ((i == len(self.w) - 2) or (i == len(self.w) - 3)) and (i in lut):
                 del lut[i]
+
+        #print(lut)
 
         print("The solution is: ")
 

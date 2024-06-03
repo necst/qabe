@@ -20,4 +20,6 @@ b[4] = 16
 #problem.prepare()
 #response = problem.sample_advantage(100)
 #problem.print_result(response)
-quadraticKnapsack.quadraticKnapsackProblem.solve_classically(list,b)
+#quadraticKnapsack.quadraticKnapsackProblem.solve_classically(list,b)
+
+quadraticKnapsack.quadraticKnapsackProblem.test_advantage(9)

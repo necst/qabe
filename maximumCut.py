@@ -53,12 +53,6 @@ class MaximumCutProblem:
             self.q = defaultdict(int)
         else:
             raise TypeError("Specify the arguments in one of the two formats: (None,None,graph) or (edges,vertices_number,None)")
-
-
-        
-
-    #def __init__(self, graph):
-
         
 
     def prepare(self):
