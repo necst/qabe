@@ -81,7 +81,6 @@ class quadraticKnapsackProblem:
        weights.append(1)
        weights.append(2)
        weights.append(boundary)
-
        #square the weights obtaining a dictionary
        w_dict = squared_pol(weights)
 
@@ -92,8 +91,8 @@ class quadraticKnapsackProblem:
        constant = w_dict["c^2"]
 
        for term,coefficient in w_dict.items():
-          if (re.match(r'x(\d)x(\d)',term)):
-             match = re.match(r'x(\d)x(\d)',term)
+          if (re.match(r'x(\d+)x(\d+)',term)):
+             match = re.match(r'x(\d+)x(\d+)',term)
              row = int(match.group(1)) - 1
              col = int(match.group(2)) - 1
 
@@ -109,8 +108,8 @@ class quadraticKnapsackProblem:
              #adding the corresponding term to the Q matrix
              self.q[(index,index)] = self.q[(index,index)] + coefficient
 
-          elif (re.match(r'x(\d)c', term)):      
-             match = re.match(r'x(\d)c',term)
+          elif (re.match(r'x(\d+)c', term)):      
+             match = re.match(r'x(\d+)c',term)
              index = int(match.group(1)) - 1
             
              #subtracting the corresponding term to the Q matrix
@@ -124,9 +123,6 @@ class quadraticKnapsackProblem:
             else:
                 self.q[(i, j)] *= -1
 
-       print(self.q)
-
-
     def sample_advantage(self, num_of_reads, chain_strength = None):
 
         sampler = EmbeddingComposite(DWaveSampler())
@@ -134,7 +130,7 @@ class quadraticKnapsackProblem:
         if chain_strength == None:
             chain_strength = uniform_torque_compensation(dimod.BinaryQuadraticModel.from_qubo(self.q, offset = 0.0), sampler)
 
-        print("Computing results on advantage...")
+        print("Computing results on Advantage...")
 
         sample_set = sampler.sample_qubo(self.q,
                                chain_strength=chain_strength,
@@ -161,23 +157,18 @@ class quadraticKnapsackProblem:
         weights = [random.randint(1, 10) for i in range(number_of_variables)]
         capacity = random.randint((number_of_variables - 1) * 3, number_of_variables * 3)
         weights.append(capacity)
-        print(weights)
         problem = quadraticKnapsackProblem(profits,weights,penalty)
-        #problem.prepare()
-        #response = problem.sample_advantage(100)
-        #problem.print_result(response)
+        problem.prepare()
+        response = problem.sample_advantage(100)
+        problem.print_result(response)
 
     def print_result(self,response):
         lut = response.first.sample
-        print(lut)
         for i in range(0, len(self.w) - 1, 1):
-            print(i)
             if i not in lut:
                 lut[i] = 0
             elif ((i == len(self.w) - 2) or (i == len(self.w) - 3)) and (i in lut):
                 del lut[i]
-
-        #print(lut)
 
         print("The solution is: ")
 
