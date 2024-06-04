@@ -22,4 +22,4 @@ b[4] = 16
 #problem.print_result(response)
 #quadraticKnapsack.quadraticKnapsackProblem.solve_classically(list,b)
 
-quadraticKnapsack.quadraticKnapsackProblem.test_advantage(9)
+quadraticKnapsack.quadraticKnapsackProblem.test_hybrid(9)

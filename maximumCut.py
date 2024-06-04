@@ -78,7 +78,7 @@ class MaximumCutProblem:
     
     def sample_hybrid(self):
 
-        sampler = LeapHybridSampler()
+        sampler = LeapHybridSampler(solver={'category': 'hybrid'})
 
         sample_set = sampler.sample_qubo(self.q, label="Maximum_Cut")
 
@@ -137,13 +137,16 @@ class MaximumCutProblem:
         problem.print_result(response)
 
     def solve_classically(graph):
+
         if not isinstance(graph,  nx.classes.graph.Graph):
             raise TypeError("A networkx graph is required")
+        
         nx.draw(graph)
         plt.show()
         max_cut_size = 0
         max_partition = None
         partitions = find_all_partitions(sorted(graph.nodes))
+        
         for partition in partitions:
             cut_size = nx.algorithms.cuts.cut_size(graph, partition)
             if cut_size > max_cut_size:

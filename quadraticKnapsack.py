@@ -141,7 +141,9 @@ class quadraticKnapsackProblem:
     
     def sample_hybrid(self):
 
-        sampler = LeapHybridSampler()
+        sampler = LeapHybridSampler(solver={'category': 'hybrid'})
+
+        print("Computing results on Hybrid...")
 
         sample_set = sampler.sample_qubo(self.q, label="Maximum_Cut")
 
@@ -161,6 +163,22 @@ class quadraticKnapsackProblem:
         problem.prepare()
         response = problem.sample_advantage(100)
         problem.print_result(response)
+
+    def test_hybrid(number_of_variables):
+        if (number_of_variables <= 1):
+            raise TypeError("The number of variables must be at least 2")
+        penalty = 10
+        profits = [[random.randint(0, 10) for i in range(number_of_variables)] for j in range(number_of_variables)]
+        #Set to have at least weight one for each 
+        weights = [random.randint(1, 10) for i in range(number_of_variables)]
+        capacity = random.randint((number_of_variables - 1) * 3, number_of_variables * 3)
+        weights.append(capacity)
+        problem = quadraticKnapsackProblem(profits,weights,penalty)
+        problem.prepare()
+        response = problem.sample_hybrid()
+        problem.print_result(response)
+
+
 
     def print_result(self,response):
         lut = response.first.sample
