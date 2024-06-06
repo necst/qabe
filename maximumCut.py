@@ -31,11 +31,17 @@ class MaximumCutProblem:
     def __init__(self, edges=None, vertices_num=None, graph = None):
         """
         Constructor of the MaximumCutProblem class.
+
         Params:
+
         edges: edges of the graph in the form of an array of arrays
                 e.g. [[i,j],[j,k],...] where i-j and j-k are two edges
                 connecting the nodes i,j and the nodes j,k
         vertices_num: number of vertices in the graph
+
+        or 
+
+        graph: a NetworkX graph
         """
 
         if edges == None and vertices_num == None and graph != None:
@@ -70,7 +76,7 @@ class MaximumCutProblem:
         if chain_strength == None:
             chain_strength = uniform_torque_compensation(dimod.BinaryQuadraticModel.from_qubo(self.q, offset = 0.0), sampler)
 
-        print("Computing results on advantage...")
+        print("Computing results on Advantage...")
 
         sample_set = sampler.sample_qubo(self.q,
                                chain_strength=chain_strength,
@@ -81,6 +87,8 @@ class MaximumCutProblem:
     def sample_hybrid(self):
 
         sampler = LeapHybridSampler(solver={'category': 'hybrid'})
+
+        print("Computing results on Hybrid...")
 
         sample_set = sampler.sample_qubo(self.q, label="Maximum_Cut")
 
@@ -122,7 +130,7 @@ class MaximumCutProblem:
                         edges.append([first_vertex,second_vertex])
                         flag = 1
 
-            return MaximumCutProblem(edges,n_vertices)
+            return MaximumCutProblem(edges,n_vertices,None)
     
     def test_advantage(number_of_nodes):
         graph = nx.fast_gnp_random_graph(number_of_nodes,0.5)
