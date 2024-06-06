@@ -32,7 +32,9 @@ class MaximumCutProblem:
         """
         Constructor of the MaximumCutProblem class.
         Params:
-        edges: edges of the graph
+        edges: edges of the graph in the form of an array of arrays
+                e.g. [[i,j],[j,k],...] where i-j and j-k are two edges
+                connecting the nodes i,j and the nodes j,k
         vertices_num: number of vertices in the graph
         """
 
@@ -141,8 +143,6 @@ class MaximumCutProblem:
         if not isinstance(graph,  nx.classes.graph.Graph):
             raise TypeError("A networkx graph is required")
         
-        nx.draw(graph)
-        plt.show()
         max_cut_size = 0
         max_partition = None
         partitions = find_all_partitions(sorted(graph.nodes))
