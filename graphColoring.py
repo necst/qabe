@@ -6,27 +6,28 @@ from dwave.system import LeapHybridSampler
 from collections import defaultdict 
 import networkx as nx
 import dimod
+import re
 
 
 
 
-def squared_pol(coeff,offset):
+def squared_pol(coeff):
 
   n = len(coeff) - 1
   squared_coeff = {}
 
   #squared terms(a_i^2)
   for i in range(n):
-    squared_coeff[f"x{i+1+offset}@2"] = coeff[i] * coeff[i]
+    squared_coeff[f"x{i+1}@2"] = coeff[i] * coeff[i]
 
   #cross terms(a_i * a_j)
   for i in range(n):
     for j in range(i + 1, n):
-      squared_coeff[f"x{i+1+offset}x{j+1+offset}"] = 2 * coeff[i] * coeff[j]
+      squared_coeff[f"x{i+1}x{j+1}"] = 2 * coeff[i] * coeff[j]
 
   #costant multiplying terms (a_i * c)
   for i in range(n):
-    squared_coeff[f"x{i+1+offset}c"] = 2 * coeff[i] * coeff[-1]
+    squared_coeff[f"x{i+1}c"] = 2 * coeff[i] * coeff[-1]
 
   #constant squared (c^2)
   squared_coeff["c^2"] = coeff[-1] ** 2
@@ -42,21 +43,25 @@ class GraphColoringProblem:
     of K colors in such a way that adjacent nodes receive
     different colors.
     """
-    def __init__(self, colors_num , edges=None, vertices_num=None, graph = None):
+    def __init__(self, colors_num , edges=None, vertices_num=None, graph = None, penalty = 10):
         """
         Constructor of the graph Coloring class.
         Params:
+        colors_num: number of colors
         edges: edges of the graph in the form of an array of arrays
                 e.g. [[i,j],[j,k],...] where i-j and j-k are two edges
                 connecting the nodes i,j and the nodes j,k
         vertices_num: number of vertices in the graph
-        colors_num: number of colors
+        penalty: the chosen penalty for the constraints
 
 
         or 
+        
+        colors_num: number of colors
+        graph: a NetworkX graph (the others are None except for )
+        penalty: the chosen penalty for the constraints
 
-        graph: a NetworkX graph
-
+        
         """
 
         if edges == None and vertices_num == None and graph != None and colors_num != None:
@@ -70,14 +75,16 @@ class GraphColoringProblem:
             self.e = edges
             self.q = defaultdict(int)
             self.k = colors_num
+            self.pen = penalty
 
         elif edges != None and vertices_num != None and graph == None and colors_num != None:
             self.e = edges
-            self.v = vertices_num
+            self.v = int(vertices_num)
             self.q = defaultdict(int)
-            self.k = colors_num
+            self.k = int(colors_num)
+            self.pen = penalty
         else:
-            raise TypeError("Specify the arguments in one of the two formats: (k,None,None,graph) or (k,edges,num_vertices,None)")
+            raise TypeError("Specify the arguments in one of the two formats: (k,None,None,graph,penalty) or (k,edges,num_vertices,None,penalty)")
         
     def prepare(self):
 
@@ -85,21 +92,49 @@ class GraphColoringProblem:
 
         pol = []
 
-        for i in range(variables_number):
+        for i in range(self.k):
             pol.append(1)
 
         pol.append(-1)
 
-        for i in range(self.v):
+        w_dict = squared_pol(pol)
 
-            ##squared_pol modificata con i
+        for key in w_dict.keys():
+           w_dict[key] = -self.pen * w_dict[key]
 
-            for j in range(self.k):
+        for i in range(0,self.v*self.k,self.k):
 
-                #aggiungo a q il coeff con una re (rivedi)
-                self.q[(0,0)] = 1 #DELETE
+            for j in range(i,i + self.k):
 
-        print(pol)
+                for term,coefficient in w_dict.items():
+                    if (re.match(r'x(\d+)x(\d+)',term)):
+                        match = re.match(r'x(\d+)x(\d+)',term)
+                        row = int(match.group(1)) - 1 + j
+                        col = int(match.group(2)) - 1 + j
+
+                        print("adding %s to %s,%s", coefficient, row, col)
+
+                        #adding the corresponding term to the Q matrix
+                        if (col >= row):
+                            self.q[(row,col)] = self.q[(row,col)] + coefficient
+                            self.q[(col,row)] = self.q[(col,row)] + coefficient
+
+                    elif (re.match(r'x(\d+)@2', term)):
+                        match = re.match(r'x(\d+)@2',term)
+                        index = int(match.group(1)) - 1 + j
+                        
+                        #adding the corresponding term to the Q matrix
+                        self.q[(index,index)] = self.q[(index,index)] + coefficient
+
+                    elif (re.match(r'x(\d+)c', term)):      
+                        match = re.match(r'x(\d+)c',term)
+                        index = int(match.group(1)) - 1 + j
+                        
+                        #subtracting the corresponding term to the Q matrix
+                        #because we didnt account for the minus before
+                        self.q[(index,index)] = self.q[(index,index)] - coefficient
+
+        print(self.q)
         
 
 
@@ -128,5 +163,8 @@ class GraphColoringProblem:
                         edges.append([first_vertex,second_vertex])
                         flag = 1
 
-            return GraphColoringProblem(n_colors,edges,n_vertices,None)
+            print("Insert the penalty: ")
+            penalty = int(input())
+
+            return GraphColoringProblem(n_colors,edges,n_vertices,None,penalty)
     

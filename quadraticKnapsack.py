@@ -101,8 +101,8 @@ class quadraticKnapsackProblem:
                 self.q[(row,col)] = self.q[(row,col)] + coefficient
                 self.q[(col,row)] = self.q[(col,row)] + coefficient
 
-          elif (re.match(r'x(\d)@2', term)):
-             match = re.match(r'x(\d)@2',term)
+          elif (re.match(r'x(\d+)@2', term)):
+             match = re.match(r'x(\d+)@2',term)
              index = int(match.group(1)) - 1
             
              #adding the corresponding term to the Q matrix
