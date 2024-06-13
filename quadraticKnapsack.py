@@ -123,6 +123,8 @@ class quadraticKnapsackProblem:
             else:
                 self.q[(i, j)] *= -1
 
+       print(self.q)
+
     def sample_advantage(self, num_of_reads, chain_strength = None):
 
         sampler = EmbeddingComposite(DWaveSampler())
@@ -231,7 +233,7 @@ class quadraticKnapsackProblem:
         print('The solution is:')
         print("{", end = "")
         for i in range(len(best_combination)):
-            if i + 1  <= len(best_combination):
+            if i + 1  < len(best_combination):
                 print("%s: %s" % (i + 1, best_combination[i]), end = ", ")
             else:
                 print("%s: %s" % (i + 1, best_combination[i]), end = "")

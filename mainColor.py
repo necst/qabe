@@ -31,10 +31,14 @@ G.add_edges_from(edges)
 
 problem = graphColoring.GraphColoringProblem(3,None,None,G)
 problem.prepare()
+response = problem.sample_advantage(100)
+problem.print_result(response)
 
-'''
 
-problem = graphColoring.GraphColoringProblem.get_problem_from_input()
-problem.prepare()
 
-'''
+#problem = graphColoring.GraphColoringProblem.get_problem_from_input()
+#problem.prepare()
+
+
+
+#graphColoring.GraphColoringProblem.test_advantage(5,3)

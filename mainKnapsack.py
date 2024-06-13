@@ -16,10 +16,10 @@ b[1] = 6
 b[2] = 5
 b[3] = 3
 b[4] = 16
-#problem = quadraticKnapsack.quadraticKnapsackProblem(list,b,10)
-#problem.prepare()
-#response = problem.sample_advantage(100)
-#problem.print_result(response)
-#quadraticKnapsack.quadraticKnapsackProblem.solve_classically(list,b)
+problem = quadraticKnapsack.quadraticKnapsackProblem(list,b,10)
+problem.prepare()
+response = problem.sample_advantage(100)
+problem.print_result(response)
+quadraticKnapsack.quadraticKnapsackProblem.solve_classically(list,b)
 
-quadraticKnapsack.quadraticKnapsackProblem.test_hybrid(9)
+#quadraticKnapsack.quadraticKnapsackProblem.test_hybrid(9)

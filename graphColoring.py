@@ -65,8 +65,12 @@ class GraphColoringProblem:
             
             self.v = graph.number_of_nodes()
             edges = []
+            add = 0
             for u,v in graph.edges(data=False):
-                edges.append([int(u),int(v)])
+                if int(u)==0 or int(v)==0:
+                    add = 1
+            for u,v in graph.edges(data=False):
+                edges.append([int(u)+add,int(v)+add])
             self.e = edges
             self.q = defaultdict(int)
             self.k = colors_num
@@ -80,11 +84,12 @@ class GraphColoringProblem:
             raise TypeError("Specify the arguments in one of the two formats: (k,None,None,graph,penalty) or (k,edges,num_vertices,None,penalty)")
         
     def prepare(self):
-
         #any positive value for the penalty will do since we do not have an objective function
         penalty = 4
 
-        variables_number = self.v * self.k
+        variables_number = 5 * self.k
+
+        print(self.e)
 
         pol = []
 
@@ -140,9 +145,7 @@ class GraphColoringProblem:
                 v1_index = (self.k * (v1-1) + k) - 1
                 v2_index = (self.k * (v2-1) + k) - 1
 
-                self.q[(v1_index,v2_index)] += penalty
-
-        print(self.q)        
+                self.q[(v1_index,v2_index)] += penalty 
 
 
     def sample_advantage(self, num_of_reads, chain_strength = None):
@@ -169,6 +172,20 @@ class GraphColoringProblem:
         sample_set = sampler.sample_qubo(self.q, label="Graph Coloring")
 
         return sample_set
+    
+    def test_advantage(number_of_nodes,colors):
+        graph = nx.fast_gnp_random_graph(number_of_nodes,0.5)
+        problem = GraphColoringProblem(colors,None,None,graph)
+        problem.prepare()
+        response = problem.sample_advantage(100)
+        problem.print_result(response)
+
+    def test_hybrid(number_of_nodes,colors):
+        graph = nx.fast_gnp_random_graph(number_of_nodes,0.5)
+        problem = GraphColoringProblem(colors,None,None,graph)
+        problem.prepare()
+        response = problem.sample_hybrid()
+        problem.print_result(response)
     
 
     def get_problem_from_input():
@@ -197,4 +214,19 @@ class GraphColoringProblem:
                         flag = 1
 
             return GraphColoringProblem(n_colors,edges,n_vertices,None)
-    
+
+    def print_result(self,response):
+        lut = response.first.sample
+        for i in range(1, int(self.v) + 1, 1):
+            if i not in lut:
+                lut[i] = 0
+
+        print("The solution is: ")
+
+        print("{", end = "")
+        for key in sorted(lut):
+            if key + 1 in lut:
+                print("%s: %s" % (key + 1, lut[key]), end = ", ")
+            else:
+                print("%s: %s" % (key + 1, lut[key]), end = "")  
+        print("}")
