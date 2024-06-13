@@ -145,7 +145,7 @@ class quadraticKnapsackProblem:
 
         print("Computing results on Hybrid...")
 
-        sample_set = sampler.sample_qubo(self.q, label="Maximum_Cut")
+        sample_set = sampler.sample_qubo(self.q, label="Quadratic Knapsack")
 
         return sample_set
     

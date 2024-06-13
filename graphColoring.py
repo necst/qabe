@@ -43,7 +43,7 @@ class GraphColoringProblem:
     of K colors in such a way that adjacent nodes receive
     different colors.
     """
-    def __init__(self, colors_num , edges=None, vertices_num=None, graph = None, penalty = 10):
+    def __init__(self, colors_num , edges=None, vertices_num=None, graph = None):
         """
         Constructor of the graph Coloring class.
         Params:
@@ -52,16 +52,11 @@ class GraphColoringProblem:
                 e.g. [[i,j],[j,k],...] where i-j and j-k are two edges
                 connecting the nodes i,j and the nodes j,k
         vertices_num: number of vertices in the graph
-        penalty: the chosen penalty for the constraints
-
 
         or 
         
         colors_num: number of colors
-        graph: a NetworkX graph (the others are None except for )
-        penalty: the chosen penalty for the constraints
-
-        
+        graph: a NetworkX graph (the others are None)
         """
 
         if edges == None and vertices_num == None and graph != None and colors_num != None:
@@ -75,18 +70,19 @@ class GraphColoringProblem:
             self.e = edges
             self.q = defaultdict(int)
             self.k = colors_num
-            self.pen = penalty
 
         elif edges != None and vertices_num != None and graph == None and colors_num != None:
             self.e = edges
             self.v = int(vertices_num)
             self.q = defaultdict(int)
             self.k = int(colors_num)
-            self.pen = penalty
         else:
             raise TypeError("Specify the arguments in one of the two formats: (k,None,None,graph,penalty) or (k,edges,num_vertices,None,penalty)")
         
     def prepare(self):
+
+        #any positive value for the penalty will do since we do not have an objective function
+        penalty = 4
 
         variables_number = self.v * self.k
 
@@ -100,43 +96,80 @@ class GraphColoringProblem:
         w_dict = squared_pol(pol)
 
         for key in w_dict.keys():
-           w_dict[key] = -self.pen * w_dict[key]
+           w_dict[key] = 4 * w_dict[key]
 
-        for i in range(0,self.v*self.k,self.k):
+        for i in range(0,variables_number,self.k):
 
-            for j in range(i,i + self.k):
+            for term,coefficient in w_dict.items():
+                if (re.match(r'x(\d+)x(\d+)',term)):
+                    match = re.match(r'x(\d+)x(\d+)',term)
+                    row = int(match.group(1)) - 1 + i
+                    col = int(match.group(2)) - 1 + i
 
-                for term,coefficient in w_dict.items():
-                    if (re.match(r'x(\d+)x(\d+)',term)):
-                        match = re.match(r'x(\d+)x(\d+)',term)
-                        row = int(match.group(1)) - 1 + j
-                        col = int(match.group(2)) - 1 + j
+                    #adding the corresponding term to the Q matrix
+                    if (col >= row):
+                        self.q[(row,col)] = self.q[(row,col)] + coefficient
+                        self.q[(col,row)] = self.q[(col,row)] + coefficient
 
-                        print("adding %s to %s,%s", coefficient, row, col)
-
-                        #adding the corresponding term to the Q matrix
-                        if (col >= row):
-                            self.q[(row,col)] = self.q[(row,col)] + coefficient
-                            self.q[(col,row)] = self.q[(col,row)] + coefficient
-
-                    elif (re.match(r'x(\d+)@2', term)):
-                        match = re.match(r'x(\d+)@2',term)
-                        index = int(match.group(1)) - 1 + j
+                elif (re.match(r'x(\d+)@2', term)):
+                    match = re.match(r'x(\d+)@2',term)
+                    index = int(match.group(1)) - 1 + i
                         
-                        #adding the corresponding term to the Q matrix
-                        self.q[(index,index)] = self.q[(index,index)] + coefficient
+                    #adding the corresponding term to the Q matrix
+                    self.q[(index,index)] = self.q[(index,index)] + coefficient
 
-                    elif (re.match(r'x(\d+)c', term)):      
-                        match = re.match(r'x(\d+)c',term)
-                        index = int(match.group(1)) - 1 + j
+                elif (re.match(r'x(\d+)c', term)):      
+                    match = re.match(r'x(\d+)c',term)
+                    index = int(match.group(1)) - 1 + i
                         
-                        #subtracting the corresponding term to the Q matrix
-                        #because we didnt account for the minus before
-                        self.q[(index,index)] = self.q[(index,index)] - coefficient
+                    #adding the corresponding term to the Q matrix
+                    self.q[(index,index)] = self.q[(index,index)] + coefficient
 
-        print(self.q)
-        
 
+        for edge in self.e:
+
+            v1 = int(edge[0])
+            v2 = int(edge[1])
+
+            if (v2 < v1):
+                v1, v2 = v2, v1
+
+            for k in range (1, self.k + 1):
+
+                #the last subtraction (-1) is due to the fact that the matrix starts from (0,0)
+                v1_index = (self.k * (v1-1) + k) - 1
+                v2_index = (self.k * (v2-1) + k) - 1
+
+                self.q[(v1_index,v2_index)] += penalty
+
+        print(self.q)        
+
+
+    def sample_advantage(self, num_of_reads, chain_strength = None):
+
+        sampler = EmbeddingComposite(DWaveSampler())
+
+        if chain_strength == None:
+            chain_strength = uniform_torque_compensation(dimod.BinaryQuadraticModel.from_qubo(self.q, offset = 0.0), sampler)
+
+        print("Computing results on Advantage...")
+
+        sample_set = sampler.sample_qubo(self.q,
+                               chain_strength=chain_strength,
+                               num_reads=num_of_reads,
+                               label='Graph Coloring')
+        return sample_set
+    
+    def sample_hybrid(self):
+
+        sampler = LeapHybridSampler(solver={'category': 'hybrid'})
+
+        print("Computing results on Hybrid...")
+
+        sample_set = sampler.sample_qubo(self.q, label="Graph Coloring")
+
+        return sample_set
+    
 
     def get_problem_from_input():
             print("Insert the number of colors: ")
@@ -163,8 +196,5 @@ class GraphColoringProblem:
                         edges.append([first_vertex,second_vertex])
                         flag = 1
 
-            print("Insert the penalty: ")
-            penalty = int(input())
-
-            return GraphColoringProblem(n_colors,edges,n_vertices,None,penalty)
+            return GraphColoringProblem(n_colors,edges,n_vertices,None)
     

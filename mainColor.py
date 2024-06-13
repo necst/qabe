@@ -3,6 +3,10 @@ import graphColoring
 import networkx as nx
 import matplotlib.pyplot as plt
 
+
+
+
+
 # Create a graph object
 G = nx.Graph()
 
@@ -25,5 +29,12 @@ G.add_edges_from(edges)
 
 
 
-problem = graphColoring.GraphColoringProblem(3,None,None,G,4)
+problem = graphColoring.GraphColoringProblem(3,None,None,G)
 problem.prepare()
+
+'''
+
+problem = graphColoring.GraphColoringProblem.get_problem_from_input()
+problem.prepare()
+
+'''
