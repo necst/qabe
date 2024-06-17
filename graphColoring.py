@@ -87,7 +87,7 @@ class GraphColoringProblem:
         #any positive value for the penalty will do since we do not have an objective function
         penalty = 4
 
-        variables_number = 5 * self.k
+        variables_number = self.v * self.k
 
         print(self.e)
 
@@ -217,16 +217,9 @@ class GraphColoringProblem:
 
     def print_result(self,response):
         lut = response.first.sample
-        for i in range(1, int(self.v) + 1, 1):
-            if i not in lut:
-                lut[i] = 0
 
         print("The solution is: ")
 
-        print("{", end = "")
-        for key in sorted(lut):
-            if key + 1 in lut:
-                print("%s: %s" % (key + 1, lut[key]), end = ", ")
-            else:
-                print("%s: %s" % (key + 1, lut[key]), end = "")  
-        print("}")
+        for key in lut:
+            if lut[key] == 1:
+                print("The vertex %s has color: %s" % ((key//self.k)+1, self.k-((key+1)%self.k)))
