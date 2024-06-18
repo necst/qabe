@@ -7,8 +7,15 @@ from collections import defaultdict
 import networkx as nx
 import dimod
 import re
+from itertools import product
 
 
+def valid_coloring(edges, coloring):
+
+    for (u, v) in edges:
+        if coloring[u] == coloring[v]:
+            return False
+    return True
 
 
 def squared_pol(coeff):
@@ -84,6 +91,7 @@ class GraphColoringProblem:
             raise TypeError("Specify the arguments in one of the two formats: (k,None,None,graph,penalty) or (k,edges,num_vertices,None,penalty)")
         
     def prepare(self):
+
         #any positive value for the penalty will do since we do not have an objective function
         penalty = 4
 
@@ -132,7 +140,6 @@ class GraphColoringProblem:
 
 
         for edge in self.e:
-
             v1 = int(edge[0])
             v2 = int(edge[1])
 
@@ -140,7 +147,6 @@ class GraphColoringProblem:
                 v1, v2 = v2, v1
 
             for k in range (1, self.k + 1):
-
                 #the last subtraction (-1) is due to the fact that the matrix starts from (0,0)
                 v1_index = (self.k * (v1-1) + k) - 1
                 v2_index = (self.k * (v2-1) + k) - 1
@@ -214,6 +220,24 @@ class GraphColoringProblem:
                         flag = 1
 
             return GraphColoringProblem(n_colors,edges,n_vertices,None)
+    
+    def solve_classically(self):
+
+        vertices = set()
+        for edge in self.e:
+            vertices.update(edge)
+        vertices = list(vertices)
+
+        for coloring in product(range(self.k), repeat=self.v):
+            vertex_color = {vertex: coloring[i] for i, vertex in enumerate(vertices)}
+        
+            if valid_coloring(self.e, vertex_color):
+                print("The solution is:")
+                for key in vertex_color:
+                    print("The vertex %s has color: %s" % (key, vertex_color[key]+1))
+                return
+        
+        print("No accettable solution has been found for the problem")
 
     def print_result(self,response):
         lut = response.first.sample
