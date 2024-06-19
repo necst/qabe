@@ -146,11 +146,16 @@ class MaximumCutProblem:
         response = problem.sample_hybrid()
         problem.print_result(response)
 
-    def solve_classically(graph):
+    def solve_classically(self):
 
-        if not isinstance(graph,  nx.classes.graph.Graph):
-            raise TypeError("A networkx graph is required")
-        
+        graph = nx.Graph()
+        nodes = range(self.v)
+        graph.add_nodes_from(nodes)
+        edges=[]
+        for edge in self.e:
+            edges.append(edge)
+        graph.add_edges_from(edges)
+
         max_cut_size = 0
         max_partition = None
         partitions = find_all_partitions(sorted(graph.nodes))
@@ -191,8 +196,3 @@ class MaximumCutProblem:
             else:
                 print("%s: %s" % (key, lut[key]), end = "")  
         print("}")
-
-    def print_min_energy(self,response):
-        max_energy = response.first.energy
-        print("minimum energy: " + str(max_energy))
-
