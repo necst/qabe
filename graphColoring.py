@@ -97,8 +97,6 @@ class GraphColoringProblem:
 
         variables_number = self.v * self.k
 
-        print(self.e)
-
         pol = []
 
         for i in range(self.k):

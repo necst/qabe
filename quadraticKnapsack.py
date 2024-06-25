@@ -44,11 +44,10 @@ class quadraticKnapsackProblem:
     It produces the best choice for the items in the knapsack.
     """
     def __init__(self, profits, weights, penalty = 10):
-        
         """
         Constructor of the quadraticKnapsackProblem class.
         Params:
-        profits: list of list of profits (polynomial) in the form:
+        profits: list of lists of profits (polynomial) in the form:
                 profits[0][0] = a1 + a11 where a1 is the coefficient of x1 and
                                 a11 is the coefficient of (x1)^2 in the polynomial
                 profits[0][1]= a12 where a12 is the coefficient of 
