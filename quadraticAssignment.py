@@ -159,8 +159,6 @@ class QuadraticAssignmentProblem:
                     #adding the corresponding term to the Q matrix
                     self.q[(index,index)] = self.q[(index,index)] + coefficient
 
-        print(self.q)
-
 
         pol = []
 
@@ -203,5 +201,54 @@ class QuadraticAssignmentProblem:
                     self.q[(index,index)] = self.q[(index,index)] + coefficient
                     print("ho aggiunto su %s,%s" % (index,index))
 
-        print(self.q)
+                  
+    def sample_advantage(self, num_of_reads, chain_strength = None):
+
+        sampler = EmbeddingComposite(DWaveSampler())
+
+        if chain_strength == None:
+            chain_strength = uniform_torque_compensation(dimod.BinaryQuadraticModel.from_qubo(self.q, offset = 0.0), sampler)
+
+        print("Computing results on Advantage...")
+
+        sample_set = sampler.sample_qubo(self.q,
+                               chain_strength=chain_strength,
+                               num_reads=num_of_reads,
+                               label='Graph Coloring')
+        return sample_set
+    
+    def sample_hybrid(self):
+
+        sampler = LeapHybridSampler(solver={'category': 'hybrid'})
+
+        print("Computing results on Hybrid...")
+
+        sample_set = sampler.sample_qubo(self.q, label="Graph Coloring")
+
+        return sample_set
+    
+    def test_advantage(number_of_nodes,colors):
+        #graph = nx.fast_gnp_random_graph(number_of_nodes,0.5)
+        #problem = GraphColoringProblem(colors,None,None,graph)
+        problem.prepare()
+        response = problem.sample_advantage(100)
+        problem.print_result(response)
+    
+    def test_hybrid(number_of_nodes,colors):
+        #graph = nx.fast_gnp_random_graph(number_of_nodes,0.5)
+        #problem = GraphColoringProblem(colors,None,None,graph)
+        problem.prepare()
+        response = problem.sample_hybrid()
+        problem.print_result(response)
+
+    def print_result(self,response):
+        lut = response.first.sample
+
+        print("The solution is: ")
+
+        for key in lut:
+            if lut[key] == 1:
+                print("The facility %s is assigned to location: %s" % (math.floor((key) / len(self.d)) + 1, (key) % len(self.d) + 1))
+    
+        
 
