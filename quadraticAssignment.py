@@ -6,6 +6,7 @@ from dwave.system import LeapHybridSampler
 from collections import defaultdict 
 import math
 import re
+import itertools
 
 
 
@@ -61,6 +62,14 @@ def squared_pol(coeff):
   return squared_coeff
 
 
+def compute_cost(permutation, flow, distance, n):
+    cost = 0
+    for i in range(n):
+        for j in range(n):
+            cost += flow[i][j] * distance[permutation[i]][permutation[j]]
+    return cost
+
+
 class QuadraticAssignmentProblem:
     """
     This class represents a Quadratic Assignment problem.
@@ -113,11 +122,8 @@ class QuadraticAssignmentProblem:
 
     
                 if (i != m and j != n):
-                    print("k: %s, s: %s, i: %s, j: %s, m: %s, n: %s" % (k,s,i,j,m,n))
                     # Using x-1 to access matrices from 0 to n
                     self.q[(k-1,s-1)] = self.q[(k-1,s-1)] + 2*self.f[i-1][m-1]*self.d[j-1][n-1]
-
-        print(self.q)
 
         pol = []
 
@@ -132,7 +138,6 @@ class QuadraticAssignmentProblem:
            w_dict[key] = self.pen * w_dict[key]
 
         for i in range(0,squared_var_number,var_number):
-            print(i)
 
             for term,coefficient in w_dict.items():
                 if (re.match(r'x(\d+)x(\d+)',term)):
@@ -183,7 +188,6 @@ class QuadraticAssignmentProblem:
                     if (col >= row):
                         self.q[(row,col)] = self.q[(row,col)] + coefficient
                         self.q[(col,row)] = self.q[(col,row)] + coefficient
-                        print("ho aggiunto su %s,%s" % (row,col))
 
                 elif (re.match(r'x(\d+)@2', term)):
                     match = re.match(r'x(\d+)@2',term)
@@ -191,7 +195,6 @@ class QuadraticAssignmentProblem:
                         
                     #adding the corresponding term to the Q matrix
                     self.q[(index,index)] = self.q[(index,index)] + coefficient
-                    print("ho aggiunto su %s,%s" % (index,index))
 
                 elif (re.match(r'x(\d+)c', term)):      
                     match = re.match(r'x(\d+)c',term)
@@ -199,7 +202,6 @@ class QuadraticAssignmentProblem:
                         
                     #adding the corresponding term to the Q matrix
                     self.q[(index,index)] = self.q[(index,index)] + coefficient
-                    print("ho aggiunto su %s,%s" % (index,index))
 
                   
     def sample_advantage(self, num_of_reads, chain_strength = None):
@@ -240,6 +242,27 @@ class QuadraticAssignmentProblem:
         problem.prepare()
         response = problem.sample_hybrid()
         problem.print_result(response)
+
+    def solve_classically(self):
+       
+        var_number = len(self.f)
+
+        permutations = list(itertools.permutations(range(var_number)))
+        best_cost = float('inf')
+        best_permutation = None
+
+        for perm in permutations:
+          current_cost = compute_cost(perm, self.f, self.d, var_number)
+          if current_cost < best_cost:
+              best_cost = current_cost
+              best_permutation = perm
+        
+        print("The solution is: ")
+
+        for i in range (len(best_permutation)):
+            print("The facility %s is assigned to location: %s" % (i+1, best_permutation[i]+1))
+
+        
 
     def print_result(self,response):
         lut = response.first.sample
