@@ -6,7 +6,7 @@ from dwave.system import LeapHybridSampler
 from collections import defaultdict 
 import networkx as nx
 import dimod
-import matplotlib.pyplot as plt
+import time
 
 
 def find_all_partitions(node_list):
@@ -64,10 +64,17 @@ class MaximumCutProblem:
         
 
     def prepare(self):
+
+        start_time = time.perf_counter()
+
         for i in range(len(self.e)):
             self.q[(self.e[i][0],self.e[i][0])] += -1
             self.q[(self.e[i][1],self.e[i][1])] += -1
             self.q[(self.e[i][0],self.e[i][1])] += 2
+
+        end_time = time.perf_counter()
+
+        return (end_time - start_time)*1000000
     
     def sample_advantage(self, num_of_reads, chain_strength = None):
 
@@ -148,6 +155,8 @@ class MaximumCutProblem:
 
     def solve_classically(self):
 
+        start_time = time.perf_counter()
+
         graph = nx.Graph()
         nodes = range(self.v)
         graph.add_nodes_from(nodes)
@@ -166,6 +175,8 @@ class MaximumCutProblem:
                 max_cut_size = cut_size
                 max_partition = partition
 
+        end_time = time.perf_counter()
+
         print("The solution is: ")
 
         print("{", end = "")
@@ -180,6 +191,8 @@ class MaximumCutProblem:
             elif node not in max_partition and node+1 not in sorted_nodes:
                 print("%s: %s" % (node, 0), end = "")
         print("}")         
+
+        return (end_time-start_time)*1000000
 
     def print_result(self,response):
         lut = response.first.sample

@@ -7,6 +7,7 @@ from collections import defaultdict
 import re
 import itertools
 import random
+import time
 
 def squared_pol(coeff):
 
@@ -63,6 +64,8 @@ class quadraticKnapsackProblem:
 
 
     def prepare(self):
+
+       start_time = time.perf_counter()
        
        #adding the profits
        for i in range(len(self.p)):
@@ -122,7 +125,9 @@ class quadraticKnapsackProblem:
             else:
                 self.q[(i, j)] *= -1
 
-       print(self.q)
+       end_time = time.perf_counter()
+
+       return (end_time - start_time)*1000000
 
     def sample_advantage(self, num_of_reads, chain_strength = None):
 
