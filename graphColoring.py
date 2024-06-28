@@ -8,6 +8,7 @@ import networkx as nx
 import dimod
 import re
 from itertools import product
+import time
 
 
 def valid_coloring(edges, coloring):
@@ -92,6 +93,8 @@ class GraphColoringProblem:
         
     def prepare(self):
 
+        start_time = time.perf_counter()
+
         #any positive value for the penalty will do since we do not have an objective function
         penalty = 4
 
@@ -150,6 +153,10 @@ class GraphColoringProblem:
                 v2_index = (self.k * (v2-1) + k) - 1
 
                 self.q[(v1_index,v2_index)] += penalty 
+        
+        end_time = time.perf_counter()
+
+        return (end_time - start_time)* 1000000
 
 
     def sample_advantage(self, num_of_reads, chain_strength = None):
@@ -221,6 +228,8 @@ class GraphColoringProblem:
     
     def solve_classically(self):
 
+        start_time = time.perf_counter()
+
         vertices = set()
         for edge in self.e:
             vertices.update(edge)
@@ -230,12 +239,16 @@ class GraphColoringProblem:
             vertex_color = {vertex: coloring[i] for i, vertex in enumerate(vertices)}
         
             if valid_coloring(self.e, vertex_color):
+                end_time = time.perf_counter()
                 print("The solution is:")
                 for key in vertex_color:
                     print("The vertex %s has color: %s" % (key, vertex_color[key]+1))
-                return
+                return (end_time-start_time)*1000000
         
         print("No accettable solution has been found for the problem")
+
+        end_time = time.perf_counter()
+        return (end_time-start_time)*1000000
 
     def print_result(self,response):
         lut = response.first.sample

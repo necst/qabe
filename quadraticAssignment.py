@@ -7,8 +7,26 @@ from collections import defaultdict
 import math
 import re
 import itertools
+import random
 
 
+def generate_matrix(n):
+
+    matrix = []
+
+    for i in range(n):
+
+        row = []
+
+        for j in range(n):
+            if i == j:
+                row.append(0)
+            else:
+                row.append(random.randint(1, 15))
+
+        matrix.append(row)
+
+    return matrix
 
 def modified_squared_pol(coeff,offset):
 
@@ -63,10 +81,13 @@ def squared_pol(coeff):
 
 
 def compute_cost(permutation, flow, distance, n):
+
     cost = 0
+
     for i in range(n):
         for j in range(n):
             cost += flow[i][j] * distance[permutation[i]][permutation[j]]
+
     return cost
 
 
@@ -105,8 +126,6 @@ class QuadraticAssignmentProblem:
         var_number = len(self.f)
 
         squared_var_number = var_number*var_number
-
-        print(var_number)
 
         for k in range(1,squared_var_number):
 
@@ -203,6 +222,8 @@ class QuadraticAssignmentProblem:
                     #adding the corresponding term to the Q matrix
                     self.q[(index,index)] = self.q[(index,index)] + coefficient
 
+        print(self.q)
+
                   
     def sample_advantage(self, num_of_reads, chain_strength = None):
 
@@ -229,16 +250,20 @@ class QuadraticAssignmentProblem:
 
         return sample_set
     
-    def test_advantage(number_of_nodes,colors):
-        #graph = nx.fast_gnp_random_graph(number_of_nodes,0.5)
-        #problem = GraphColoringProblem(colors,None,None,graph)
+    def test_advantage(number_of_facilities, penalty = 200):
+        flow = generate_matrix(number_of_facilities)
+        distance = generate_matrix(number_of_facilities)
+        problem = QuadraticAssignmentProblem(flow,distance,penalty)
+        print(flow)
+        print(distance)
         problem.prepare()
         response = problem.sample_advantage(100)
         problem.print_result(response)
     
-    def test_hybrid(number_of_nodes,colors):
-        #graph = nx.fast_gnp_random_graph(number_of_nodes,0.5)
-        #problem = GraphColoringProblem(colors,None,None,graph)
+    def test_hybrid(number_of_facilities, penalty = 200):
+        flow = generate_matrix(number_of_facilities)
+        distance = generate_matrix(number_of_facilities)
+        problem = QuadraticAssignmentProblem(flow,distance,penalty)
         problem.prepare()
         response = problem.sample_hybrid()
         problem.print_result(response)
@@ -266,6 +291,7 @@ class QuadraticAssignmentProblem:
 
     def print_result(self,response):
         lut = response.first.sample
+        print(lut)
 
         print("The solution is: ")
 

@@ -1,0 +1,10 @@
+numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime
+14, -24.000000, 1, 23.805166, 122.64, 15901.8, 15779.16, 276.815000
+numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime
+6, -16.000000, 1, 6.530986, 86.56, 15865.72, 15779.16, 230.399000
+numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime
+6, -12.000000, 1, 7.998792, 108.16, 15887.32, 15779.16, 219.027001
+numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime
+6, -8.000000, 2, 10.326396, 97.74, 15877.3, 15779.56, 240.908000
+numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime
+14, -12.000000, 2, 25.113077, 126.68, 15906.64, 15779.96, 337.648000, 143.567000
