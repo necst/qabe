@@ -13,3 +13,30 @@ from dwave.embedding.chimera import *
 from dwave.embedding.chain_strength import *
 import networkx as nx
 import math
+import random
+
+
+f = open("quadraticKnapsack.csv", "a")
+f.write("numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime, classicaltime\n")
+
+for var_number in range(10,11,10):
+    profits = [[random.randint(0, 10) for i in range(var_number)] for j in range(var_number)]
+    #Set to have at least weight one for each 
+    weights = [random.randint(1, 10) for i in range(var_number)]
+    capacity = random.randint((var_number - 1) * 3, var_number * 3)
+    weights.append(capacity)
+    problem = quadraticKnapsack.quadraticKnapsackProblem(profits,weights,10)
+    classical_time = problem.solve_classically()
+    prepare_time = problem.prepare()
+    sampler = EmbeddingComposite(DWaveSampler())
+    chain_strength = uniform_torque_compensation(dimod.BinaryQuadraticModel.from_qubo(problem.q, offset = 0.0), sampler)
+    sample_set = sampler.sample_qubo(problem.q, label="Quadratic Knapsack")
+    embedding = sample_set.info['embedding_context']['embedding']
+    lengths = [len(chain) for chain in embedding.values()]
+    num_qubit = sum(lengths)
+    max_chain_length = max(lengths)
+    f.write("%d, %f, %d, %f, %s, %s, %s, %f, %f\n" % \
+                (var_number, sample_set.first.energy, max_chain_length, chain_strength, \
+                str(sample_set.info['timing']['qpu_sampling_time']),\
+                str(sample_set.info['timing']['qpu_access_time']), str(sample_set.info['timing']['qpu_programming_time']), \
+                      prepare_time, classical_time))

@@ -205,8 +205,13 @@ class quadraticKnapsackProblem:
         print("}")
 
 
-    def solve_classically(profits,weights):
+    def solve_classically(self):
 
+        start_time = time.perf_counter()
+
+        weights = self.w
+        profits = self.p
+        
         capacity = weights.pop()
         n = len(profits[0])
 
@@ -234,6 +239,8 @@ class quadraticKnapsackProblem:
                     best_profit = total_profit
                     best_combination = combination
 
+        end_time = time.perf_counter()
+
         print('The solution is:')
         print("{", end = "")
         for i in range(len(best_combination)):
@@ -242,3 +249,5 @@ class quadraticKnapsackProblem:
             else:
                 print("%s: %s" % (i + 1, best_combination[i]), end = "")
         print("}")
+
+        return (end_time - start_time)*1000000

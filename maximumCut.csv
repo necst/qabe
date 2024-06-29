@@ -2,3 +2,6 @@ numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime
 numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime, classicaltime
 numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime, classicaltime
 10, -21.000000, 2, 6.810726, 106.34, 15885.5, 15779.16, 37.510001, 13638.259000
+numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime, classicaltime
+numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime, classicaltime
+10, -1031.000000, 3, 1409.387980, 112.24, 15891.8, 15779.56, 491.316000, 2221.924000
