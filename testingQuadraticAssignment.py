@@ -34,6 +34,7 @@ def generate_matrix(n):
 
 
 f = open("quadraticAssignment.csv", "a")
+f.write("TESTING ADVANTAGE\n")
 f.write("numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime, classicaltime\n")
 
 for i in range(3,11,1):
@@ -55,4 +56,20 @@ for i in range(3,11,1):
                 str(sample_set.info['timing']['qpu_sampling_time']),\
                 str(sample_set.info['timing']['qpu_access_time']), str(sample_set.info['timing']['qpu_programming_time']), \
                       prepare_time, classical_time))
+    
+
+f.write("TESTING HYBRID\n")
+
+for i in range(3,11,1):
+    var_number = i*i
+    flow = generate_matrix(i)
+    distance = generate_matrix(i)
+    problem = quadraticAssignment.QuadraticAssignmentProblem(flow,distance)
+    classical_time = problem.solve_classically()
+    prepare_time = problem.prepare()
+    sampler = LeapHybridSampler(solver={'category': 'hybrid'})
+    sample_set = sampler.sample_qubo(problem.q, label="Quadratic Knapsack")
+    f.write("%d, %f, %s, %f\n" % \
+                (var_number, sample_set.first.energy, \
+                str(sample_set.info['qpu_access_time']), classical_time))
 

@@ -32,6 +32,7 @@ f = open("graphColoring.csv", "a")
 f.write("TESTING ADVANTAGE\n")
 f.write("numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime, classicaltime\n")
 
+'''
 
 for i in range(3,11,1):
     var_number = i*i
@@ -53,4 +54,19 @@ for i in range(3,11,1):
                 str(sample_set.info['timing']['qpu_sampling_time']),\
                 str(sample_set.info['timing']['qpu_access_time']), str(sample_set.info['timing']['qpu_programming_time']), \
                       prepare_time, classical_time))
+'''
 
+f.write("TESTING HYBRID\n")
+for i in range(3,11,1):
+    var_number = i*i
+    edge_probability = 0.3
+    nodes, colors, variables = get_parameters(var_number, edge_probability)
+    graph = nx.fast_gnp_random_graph(nodes, edge_probability)
+    problem = graphColoring.GraphColoringProblem(colors,None,None,graph)
+    classical_time = 0.0
+    prepare_time = problem.prepare()
+    sampler = LeapHybridSampler(solver={'category': 'hybrid'})
+    sample_set = sampler.sample_qubo(problem.q, label="Quadratic Knapsack")
+    f.write("%d, %f, %s, %f\n" % \
+                (var_number, sample_set.first.energy, \
+                str(sample_set.info['qpu_access_time']), classical_time))
