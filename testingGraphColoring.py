@@ -40,7 +40,7 @@ for i in range(3,11,1):
     nodes, colors, variables = get_parameters(var_number, edge_probability)
     graph = nx.fast_gnp_random_graph(nodes, edge_probability)
     problem = graphColoring.GraphColoringProblem(colors,None,None,graph)
-    classical_time = problem.solve_classically()
+    classical_time = 0.0#problem.solve_classically()
     prepare_time = problem.prepare()
     sampler = EmbeddingComposite(DWaveSampler())
     chain_strength = uniform_torque_compensation(dimod.BinaryQuadraticModel.from_qubo(problem.q, offset = 0.0), sampler)
