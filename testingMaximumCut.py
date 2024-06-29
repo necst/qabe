@@ -15,7 +15,7 @@ import networkx as nx
 
 
 f = open("maximumCut.csv", "a")
-f.write("TEST ADVANTAGE")
+f.write("TEST ADVANTAGE\n")
 f.write("numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime, classicaltime\n")
 
 for i in range(3,11,1):
@@ -41,7 +41,7 @@ for i in range(3,11,1):
                       prepare_time, classical_time))
     
 f.write("TESTING HYBRID\n")
-    
+f.write("numvar, minenergy, qpuaccesstime, classicaltime\n")
 for i in range(3,11,1):
     var_number = i*i
     graph = nx.fast_gnp_random_graph(var_number, 0.5)

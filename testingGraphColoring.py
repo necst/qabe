@@ -30,9 +30,9 @@ def calculate_colors(number_of_nodes, p):
 
 f = open("graphColoring.csv", "a")
 f.write("TESTING ADVANTAGE\n")
-f.write("numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime, classicaltime\n")
+f.write("numvar, numqubit, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime, classicaltime\n")
 
-'''
+
 
 for i in range(3,11,1):
     var_number = i*i
@@ -49,14 +49,15 @@ for i in range(3,11,1):
     lengths = [len(chain) for chain in embedding.values()]
     num_qubit = sum(lengths)
     max_chain_length = max(lengths)
-    f.write("%d, %f, %d, %f, %s, %s, %s, %f, %f\n" % \
-                ( variables, sample_set.first.energy, max_chain_length, chain_strength, \
+    f.write("%d, %d, %f, %d, %f, %s, %s, %s, %f, %f\n" % \
+                ( variables, num_qubit, sample_set.first.energy, max_chain_length, chain_strength, \
                 str(sample_set.info['timing']['qpu_sampling_time']),\
                 str(sample_set.info['timing']['qpu_access_time']), str(sample_set.info['timing']['qpu_programming_time']), \
                       prepare_time, classical_time))
-'''
+
 
 f.write("TESTING HYBRID\n")
+f.write("numvar, minenergy, qpuaccesstime, classicaltime\n")
 for i in range(3,11,1):
     var_number = i*i
     edge_probability = 0.3

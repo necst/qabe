@@ -15,8 +15,9 @@ import random
 
 
 f = open("quadraticKnapsack.csv", "a")
+f.write("TESTING ADVANTAGE\n")
 f.write("numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime, classicaltime\n")
-f.write("TESTING ADVANTAGE")
+
 
 for i in range(3,11,1):
     var_number = i*i
@@ -44,6 +45,7 @@ for i in range(3,11,1):
                       prepare_time, classical_time))
 
 f.write("TESTING HYBRID\n")
+f.write("numvar, minenergy, qpuaccesstime, classicaltime\n")
 for i in range(3,11,1):
     var_number = i*i
     profits = [[random.randint(0, 10) for i in range(var_number)] for j in range(var_number)]
