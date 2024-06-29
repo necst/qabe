@@ -8,6 +8,7 @@ import math
 import re
 import itertools
 import random
+import time
 
 
 def generate_matrix(n):
@@ -123,6 +124,8 @@ class QuadraticAssignmentProblem:
 
     def prepare(self):
 
+        start_time = time.perf_counter()
+
         var_number = len(self.f)
 
         squared_var_number = var_number*var_number
@@ -222,7 +225,9 @@ class QuadraticAssignmentProblem:
                     #adding the corresponding term to the Q matrix
                     self.q[(index,index)] = self.q[(index,index)] + coefficient
 
-        print(self.q)
+        end_time = time.perf_counter()
+
+        return (end_time - start_time)*1000000
 
                   
     def sample_advantage(self, num_of_reads, chain_strength = None):
@@ -269,6 +274,8 @@ class QuadraticAssignmentProblem:
         problem.print_result(response)
 
     def solve_classically(self):
+
+        start_time = time.perf_counter()
        
         var_number = len(self.f)
 
@@ -282,10 +289,14 @@ class QuadraticAssignmentProblem:
               best_cost = current_cost
               best_permutation = perm
         
+        end_time = time.perf_counter()
+        
         print("The solution is: ")
 
         for i in range (len(best_permutation)):
             print("The facility %s is assigned to location: %s" % (i+1, best_permutation[i]+1))
+
+        return (end_time - start_time)*1000000
 
         
 
