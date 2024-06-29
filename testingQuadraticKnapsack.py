@@ -25,7 +25,7 @@ for i in range(3,11,1):
     capacity = random.randint((var_number - 1) * 3, var_number * 3)
     weights.append(capacity)
     problem = quadraticKnapsack.quadraticKnapsackProblem(profits,weights,10)
-    classical_time = 1#problem.solve_classically()
+    classical_time = problem.solve_classically()
     prepare_time = problem.prepare()
     sampler = EmbeddingComposite(DWaveSampler())
     chain_strength = uniform_torque_compensation(dimod.BinaryQuadraticModel.from_qubo(problem.q, offset = 0.0), sampler)
