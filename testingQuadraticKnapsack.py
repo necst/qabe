@@ -17,7 +17,7 @@ import random
 f = open("quadraticKnapsack.csv", "a")
 f.write("numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime, classicaltime\n")
 
-for i in range(3,4,1):
+for i in range(3,11,1):
     var_number = i*i
     profits = [[random.randint(0, 10) for i in range(var_number)] for j in range(var_number)]
     #Set to have at least weight one for each 
@@ -25,7 +25,7 @@ for i in range(3,4,1):
     capacity = random.randint((var_number - 1) * 3, var_number * 3)
     weights.append(capacity)
     problem = quadraticKnapsack.quadraticKnapsackProblem(profits,weights,10)
-    classical_time = problem.solve_classically()
+    classical_time = 1#problem.solve_classically()
     prepare_time = problem.prepare()
     sampler = EmbeddingComposite(DWaveSampler())
     chain_strength = uniform_torque_compensation(dimod.BinaryQuadraticModel.from_qubo(problem.q, offset = 0.0), sampler)

@@ -36,7 +36,7 @@ def generate_matrix(n):
 f = open("quadraticAssignment.csv", "a")
 f.write("numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime, classicaltime\n")
 
-for i in range(3,4,1):
+for i in range(3,11,1):
     var_number = i*i
     flow = generate_matrix(i)
     distance = generate_matrix(i)

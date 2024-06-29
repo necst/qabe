@@ -29,12 +29,13 @@ def calculate_colors(number_of_nodes, p):
     return math.ceil(avg_degree / 2)
 
 f = open("graphColoring.csv", "a")
+f.write("TESTING ADVANTAGE\n")
 f.write("numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime, classicaltime\n")
 
 
-for i in range(3,4,1):
+for i in range(3,11,1):
     var_number = i*i
-    edge_probability = 0.4
+    edge_probability = 0.3
     nodes, colors, variables = get_parameters(var_number, edge_probability)
     graph = nx.fast_gnp_random_graph(nodes, edge_probability)
     problem = graphColoring.GraphColoringProblem(colors,None,None,graph)

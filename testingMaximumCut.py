@@ -17,11 +17,11 @@ import networkx as nx
 f = open("maximumCut.csv", "a")
 f.write("numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime, classicaltime\n")
 
-for i in range(3,4,1):
+for i in range(3,11,1):
     var_number = i*i
     graph = nx.fast_gnp_random_graph(var_number, 0.5)
     problem = maximumCut.MaximumCutProblem(None,None,graph)
-    classical_time = problem.solve_classically()
+    classical_time = 1#problem.solve_classically()
     prepare_time = problem.prepare()
     sampler = EmbeddingComposite(DWaveSampler())
     chain_strength = uniform_torque_compensation(dimod.BinaryQuadraticModel.from_qubo(problem.q, offset = 0.0), sampler)
