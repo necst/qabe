@@ -17,7 +17,8 @@ import random
 f = open("quadraticKnapsack.csv", "a")
 f.write("numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime, classicaltime\n")
 
-for var_number in range(10,11,10):
+for i in range(3,4,1):
+    var_number = i*i
     profits = [[random.randint(0, 10) for i in range(var_number)] for j in range(var_number)]
     #Set to have at least weight one for each 
     weights = [random.randint(1, 10) for i in range(var_number)]

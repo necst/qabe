@@ -22,6 +22,7 @@ def get_parameters(target_variables, p):
         if total_variables >= target_variables:
             return number_of_nodes, number_of_colors, total_variables
         number_of_nodes += 1
+    
 
 def calculate_colors(number_of_nodes, p):
     avg_degree = p * (number_of_nodes - 1)
@@ -31,7 +32,8 @@ f = open("graphColoring.csv", "a")
 f.write("numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime, classicaltime\n")
 
 
-for var_number in range(10,11,10):
+for i in range(3,4,1):
+    var_number = i*i
     edge_probability = 0.4
     nodes, colors, variables = get_parameters(var_number, edge_probability)
     graph = nx.fast_gnp_random_graph(nodes, edge_probability)

@@ -17,7 +17,8 @@ import networkx as nx
 f = open("maximumCut.csv", "a")
 f.write("numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime, classicaltime\n")
 
-for var_number in range(10,11,10):
+for i in range(3,4,1):
+    var_number = i*i
     graph = nx.fast_gnp_random_graph(var_number, 0.5)
     problem = maximumCut.MaximumCutProblem(None,None,graph)
     classical_time = problem.solve_classically()
