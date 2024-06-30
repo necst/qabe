@@ -44,7 +44,10 @@ for i in range(3,11,1):
     prepare_time = problem.prepare()
     sampler = EmbeddingComposite(DWaveSampler())
     chain_strength = uniform_torque_compensation(dimod.BinaryQuadraticModel.from_qubo(problem.q, offset = 0.0), sampler)
-    sample_set = sampler.sample_qubo(problem.q, label="Graph Coloring")
+    sample_set = sampler.sample_qubo(problem.q,
+                               chain_strength=chain_strength,
+                               num_reads=100,
+                               label='Graph Coloring')
     embedding = sample_set.info['embedding_context']['embedding']
     lengths = [len(chain) for chain in embedding.values()]
     num_qubit = sum(lengths)
