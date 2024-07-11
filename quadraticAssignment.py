@@ -12,7 +12,10 @@ import time
 
 
 def generate_matrix(n):
-
+    """
+    The function generates a matrix of random integers with a
+    null diagonal given the size received in input.
+    """
     matrix = []
 
     for i in range(n):
@@ -30,7 +33,13 @@ def generate_matrix(n):
     return matrix
 
 def modified_squared_pol(coeff,offset):
-
+  """
+  Returns a dictionary containing all the terms and
+  their coefficients (as key value pairs) of the squared 
+  polynomial represented by the coefficients' list in input.
+  To the terms considered is applied an offset to shift their
+  indexes accordingly.
+  """
   n = len(coeff) - 1
   squared_coeff = {}
 
@@ -58,7 +67,11 @@ def modified_squared_pol(coeff,offset):
 
 
 def squared_pol(coeff):
-
+  """
+  Returns a dictionary containing all the terms and
+  their coefficients (as key value pairs) of the squared 
+  polynomial represented by the coefficients' list in input.
+  """
   n = len(coeff) - 1
   squared_coeff = {}
 
@@ -82,7 +95,11 @@ def squared_pol(coeff):
 
 
 def compute_cost(permutation, flow, distance, n):
-
+    """
+    Computes and returns the cost of the single facilities-locations
+    assignment returning the sum of the flow times distance for each
+    pair of facilities
+    """
     cost = 0
 
     for i in range(n):
@@ -123,7 +140,12 @@ class QuadraticAssignmentProblem:
 
 
     def prepare(self):
-
+        """
+        Builds the Q matrix manipulating the problem
+        optimization function and constraints. It returns
+        the time needed to perform the matrix construction 
+        in microseconds.
+        """
         start_time = time.perf_counter()
 
         var_number = len(self.f)
@@ -231,7 +253,11 @@ class QuadraticAssignmentProblem:
 
                   
     def sample_advantage(self, num_of_reads, chain_strength = None):
-
+        """
+        Performs the sampling using the D-Wave
+        using the given number of reads and chian strength
+        Advantage QPU and returns its response
+        """
         sampler = EmbeddingComposite(DWaveSampler())
 
         if chain_strength == None:
@@ -246,7 +272,10 @@ class QuadraticAssignmentProblem:
         return sample_set
     
     def sample_hybrid(self):
-
+        """
+        Performs the sampling using the D-Wave
+        hybrid solver and returns its response
+        """
         sampler = LeapHybridSampler(solver={'category': 'hybrid'})
 
         print("Computing results on Hybrid...")
@@ -256,6 +285,13 @@ class QuadraticAssignmentProblem:
         return sample_set
     
     def test_advantage(number_of_facilities, penalty = 200):
+        """
+        Takes in input the number of facilities (the
+        number of locations is the same) and the penalty values
+        to build a random instance of the Quadratic Assignment problem.
+        Then it proceeds to solve the problem
+        using the D-Wave Advantage QPU and prints the results.
+        """
         flow = generate_matrix(number_of_facilities)
         distance = generate_matrix(number_of_facilities)
         problem = QuadraticAssignmentProblem(flow,distance,penalty)
@@ -266,6 +302,13 @@ class QuadraticAssignmentProblem:
         problem.print_result(response)
     
     def test_hybrid(number_of_facilities, penalty = 200):
+        """
+        Takes in input the number of facilities (the
+        number of locations is the same) and the penalty values
+        to build a random instance of the Quadratic Assignment problem.
+        Then it proceeds to solve the problem
+        using the D-Wave hybrid solver and prints the results.
+        """
         flow = generate_matrix(number_of_facilities)
         distance = generate_matrix(number_of_facilities)
         problem = QuadraticAssignmentProblem(flow,distance,penalty)
@@ -274,7 +317,12 @@ class QuadraticAssignmentProblem:
         problem.print_result(response)
 
     def solve_classically(self):
-
+        """
+        Takes in input an instance of a Quadratic Assignment Problem
+        and solves it using a classical brute force algorithm.
+        Then it prints the results and returns the time in microseconds
+        needed to obtain the solution classically 
+        """
         start_time = time.perf_counter()
        
         var_number = len(self.f)
@@ -301,6 +349,10 @@ class QuadraticAssignmentProblem:
         
 
     def print_result(self,response):
+        """
+        Prints the solution of the Quadratic Assignment problem
+        instance after the sampling
+        """
         lut = response.first.sample
         print(lut)
 

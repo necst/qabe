@@ -29,7 +29,7 @@ def calculate_colors(number_of_nodes, p):
     return math.ceil(avg_degree / 2)
 
 f = open("graphColoring.csv", "a")
-f.write("TESTING ADVANTAGE\n")
+f.write("TESTING ADVANTAGE1\n")
 f.write("numvar, numqubit, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime, classicaltime\n")
 
 
@@ -59,8 +59,8 @@ for i in range(3,11,1):
                       prepare_time, classical_time))
 
 
-f.write("TESTING HYBRID\n")
-f.write("numvar, minenergy, qpuaccesstime, classicaltime\n")
+f.write("TESTING HYBRID1\n")
+f.write("numvar, chainstrength, minenergy, qpuaccesstime, classicaltime\n")
 for i in range(3,11,1):
     var_number = i*i
     edge_probability = 0.3
@@ -70,7 +70,8 @@ for i in range(3,11,1):
     classical_time = 0.0
     prepare_time = problem.prepare()
     sampler = LeapHybridSampler(solver={'category': 'hybrid'})
+    chain_strength = uniform_torque_compensation(dimod.BinaryQuadraticModel.from_qubo(problem.q, offset = 0.0), sampler)
     sample_set = sampler.sample_qubo(problem.q, label="Quadratic Knapsack")
-    f.write("%d, %f, %s, %f\n" % \
-                (var_number, sample_set.first.energy, \
+    f.write("%d, %f, %f, %s, %f\n" % \
+                (var_number, chain_strength, sample_set.first.energy, \
                 str(sample_set.info['qpu_access_time']), classical_time))

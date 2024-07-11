@@ -34,7 +34,7 @@ def generate_matrix(n):
 
 
 f = open("quadraticAssignment.csv", "a")
-f.write("TESTING ADVANTAGE\n")
+f.write("TESTING ADVANTAGE1\n")
 f.write("numvar, numqubits, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime, classicaltime\n")
 
 for i in range(3,11,1):
@@ -42,7 +42,7 @@ for i in range(3,11,1):
     flow = generate_matrix(i)
     distance = generate_matrix(i)
     problem = quadraticAssignment.QuadraticAssignmentProblem(flow,distance)
-    classical_time = problem.solve_classically()
+    classical_time = 0.0#problem.solve_classically()
     prepare_time = problem.prepare()
     sampler = EmbeddingComposite(DWaveSampler())
     chain_strength = uniform_torque_compensation(dimod.BinaryQuadraticModel.from_qubo(problem.q, offset = 0.0), sampler)
@@ -58,8 +58,8 @@ for i in range(3,11,1):
                       prepare_time, classical_time))
     
 
-f.write("TESTING HYBRID\n")
-f.write("numvar, minenergy, qpuaccesstime, classicaltime\n")
+f.write("TESTING HYBRID1\n")
+f.write("numvar, chainstrength, minenergy, qpuaccesstime, classicaltime\n")
 
 
 for i in range(3,11,1):
@@ -67,11 +67,12 @@ for i in range(3,11,1):
     flow = generate_matrix(i)
     distance = generate_matrix(i)
     problem = quadraticAssignment.QuadraticAssignmentProblem(flow,distance)
-    classical_time = problem.solve_classically()
+    classical_time = 0.0#problem.solve_classically()
     prepare_time = problem.prepare()
     sampler = LeapHybridSampler(solver={'category': 'hybrid'})
+    chain_strength = uniform_torque_compensation(dimod.BinaryQuadraticModel.from_qubo(problem.q, offset = 0.0), sampler)
     sample_set = sampler.sample_qubo(problem.q, label="Quadratic Knapsack")
-    f.write("%d, %f, %s, %f\n" % \
-                (var_number, sample_set.first.energy, \
+    f.write("%d, %f, %f, %s, %f\n" % \
+                (var_number, chain_strength, sample_set.first.energy, \
                 str(sample_set.info['qpu_access_time']), classical_time))
 

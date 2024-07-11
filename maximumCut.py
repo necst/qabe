@@ -10,6 +10,9 @@ import time
 
 
 def find_all_partitions(node_list):
+    """
+    Given a list of nodes returns all the subsets of the node's set
+    """
     if len(node_list) == 0:
         return [[]]
     partitions = []
@@ -64,7 +67,12 @@ class MaximumCutProblem:
         
 
     def prepare(self):
-
+        """
+        Builds the Q matrix manipulating the problem
+        optimization function and constraints. It returns
+        the time needed to perform the matrix construction 
+        in microseconds.
+        """
         start_time = time.perf_counter()
 
         for i in range(len(self.e)):
@@ -77,7 +85,11 @@ class MaximumCutProblem:
         return (end_time - start_time)*1000000
     
     def sample_advantage(self, num_of_reads, chain_strength = None):
-
+        """
+        Performs the sampling using the D-Wave
+        using the given number of reads and chian strength
+        Advantage QPU and returns its response
+        """
         sampler = EmbeddingComposite(DWaveSampler())
 
         if chain_strength == None:
@@ -92,7 +104,10 @@ class MaximumCutProblem:
         return sample_set
     
     def sample_hybrid(self):
-
+        """
+        Performs the sampling using the D-Wave
+        hybrid solver and returns its response
+        """
         sampler = LeapHybridSampler(solver={'category': 'hybrid'})
 
         print("Computing results on Hybrid...")
@@ -100,23 +115,14 @@ class MaximumCutProblem:
         sample_set = sampler.sample_qubo(self.q, label="Maximum_Cut")
 
         return sample_set
-    
-    def sample_2000Q(self, num_of_reads, chain_strength = None):
 
-        sampler = EmbeddingComposite(DWaveSampler(solver={'topology__type': 'chimera'}))
-
-        if chain_strength == None:
-            chain_strength = uniform_torque_compensation(dimod.BinaryQuadraticModel.from_qubo(self.q, offset = 0.0), sampler)
-
-        print("Computing results on advantage...")
-
-        sample_set = sampler.sample_qubo(self.q,
-                               chain_strength=chain_strength,
-                               num_reads=num_of_reads,
-                               label='Maximum Cut')
-        return sample_set
 
     def get_problem_from_input():
+            """
+            Builds (and returns) a Maximum Cut problem
+            instance using the parameters obtained from 
+            the input.
+            """
             print("Insert the number of vertices: ")
             n_vertices = input()
             if( int(n_vertices) <= 0):
@@ -140,6 +146,12 @@ class MaximumCutProblem:
             return MaximumCutProblem(edges,n_vertices,None)
     
     def test_advantage(number_of_nodes):
+        """
+        Takes in input the number of nodes to build a random
+        instance of the Maximum Cut problem.
+        Then it proceeds to solve the problem
+        using the D-Wave Advantage QPU and prints the results.
+        """
         graph = nx.fast_gnp_random_graph(number_of_nodes,0.5)
         problem = MaximumCutProblem(graph)
         problem.prepare()
@@ -147,6 +159,12 @@ class MaximumCutProblem:
         problem.print_result(response)
 
     def test_hybrid(number_of_nodes):
+        """
+        Takes in input the number of nodes to build a random
+        instance of the Maximum Cut problem.
+        Then it proceeds to solve the problem
+        using the D-Wave hybrid solver and prints the results.
+        """
         graph = nx.fast_gnp_random_graph(number_of_nodes,0.5)
         problem = MaximumCutProblem(graph)
         problem.prepare()
@@ -154,7 +172,12 @@ class MaximumCutProblem:
         problem.print_result(response)
 
     def solve_classically(self):
-
+        """
+        Takes in input an instance of a Maximum Cut Problem
+        and solves it using a classical brute force algorithm.
+        Then it prints the results and returns the time in microseconds
+        needed to obtain the solution classically 
+        """
         start_time = time.perf_counter()
 
         graph = nx.Graph()
@@ -195,6 +218,10 @@ class MaximumCutProblem:
         return (end_time-start_time)*1000000
 
     def print_result(self,response):
+        """
+        Prints the solution of the Maximum Cut problem
+        instance after the sampling
+        """
         lut = response.first.sample
         for i in range(1, int(self.v) + 1, 1):
             if i not in lut:

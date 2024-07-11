@@ -15,8 +15,8 @@ import networkx as nx
 
 
 f = open("maximumCut.csv", "a")
-f.write("TEST ADVANTAGE\n")
-f.write("numvar, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime, classicaltime\n")
+f.write("TEST ADVANTAGE1\n")
+f.write("numvar, numqubit, minenergy, maxchainlength, chainstrength, qpusamplingtime, qpuaccesstime, qpuprogrammingtime, preparetime, classicaltime\n")
 
 for i in range(3,11,1):
     var_number = i*i
@@ -40,8 +40,8 @@ for i in range(3,11,1):
                 str(sample_set.info['timing']['qpu_access_time']), str(sample_set.info['timing']['qpu_programming_time']), \
                       prepare_time, classical_time))
     
-f.write("TESTING HYBRID\n")
-f.write("numvar, minenergy, qpuaccesstime, classicaltime\n")
+f.write("TESTING HYBRID1\n")
+f.write("numvar, chainstrength, minenergy, qpuaccesstime, classicaltime\n")
 for i in range(3,11,1):
     var_number = i*i
     graph = nx.fast_gnp_random_graph(var_number, 0.5)
@@ -49,7 +49,8 @@ for i in range(3,11,1):
     classical_time = 0.0#problem.solve_classically()
     prepare_time = problem.prepare()
     sampler = LeapHybridSampler(solver={'category': 'hybrid'})
+    chain_strength = uniform_torque_compensation(dimod.BinaryQuadraticModel.from_qubo(problem.q, offset = 0.0), sampler)
     sample_set = sampler.sample_qubo(problem.q, label="Quadratic Knapsack")
-    f.write("%d, %f, %s, %f\n" % \
-                (var_number, sample_set.first.energy, \
+    f.write("%d, %f, %f, %s, %f\n" % \
+                (var_number, chain_strength, sample_set.first.energy, \
                 str(sample_set.info['qpu_access_time']), classical_time))

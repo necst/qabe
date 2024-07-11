@@ -10,7 +10,11 @@ import random
 import time
 
 def squared_pol(coeff):
-
+  """
+  Returns a dictionary containing all the terms and
+  their coefficients (as key value pairs) of the squared 
+  polynomial represented by the coefficients' list in input.
+  """
   n = len(coeff) - 1
   squared_coeff = {}
 
@@ -64,7 +68,12 @@ class quadraticKnapsackProblem:
 
 
     def prepare(self):
-
+       """
+        Builds the Q matrix manipulating the problem
+        optimization function and constraints. It returns
+        the time needed to perform the matrix construction 
+        in microseconds.
+       """
        start_time = time.perf_counter()
        
        #adding the profits
@@ -130,7 +139,11 @@ class quadraticKnapsackProblem:
        return (end_time - start_time)*1000000
 
     def sample_advantage(self, num_of_reads, chain_strength = None):
-
+        """
+        Performs the sampling using the D-Wave
+        using the given number of reads and chian strength
+        Advantage QPU and returns its response
+        """
         sampler = EmbeddingComposite(DWaveSampler())
 
         if chain_strength == None:
@@ -146,7 +159,10 @@ class quadraticKnapsackProblem:
     
     
     def sample_hybrid(self):
-
+        """
+        Performs the sampling using the D-Wave
+        hybrid solver and returns its response
+        """
         sampler = LeapHybridSampler(solver={'category': 'hybrid'})
 
         print("Computing results on Hybrid...")
@@ -157,6 +173,12 @@ class quadraticKnapsackProblem:
     
 
     def test_advantage(number_of_variables):
+        """
+        Takes in input the number of variables of the problem
+        to build a random instance of the Quadratic Assignment problem.
+        Then it proceeds to solve the problem
+        using the D-Wave Advantage QPU and prints the results.
+        """
         if (number_of_variables <= 1):
             raise TypeError("The number of variables must be at least 2")
         penalty = 10
@@ -171,6 +193,12 @@ class quadraticKnapsackProblem:
         problem.print_result(response)
 
     def test_hybrid(number_of_variables):
+        """
+        Takes in input the number of variables of the problem
+        to build a random instance of the Quadratic Assignment problem.
+        Then it proceeds to solve the problem
+        using the D-Wave hybrid solver and prints the results.
+        """
         if (number_of_variables <= 1):
             raise TypeError("The number of variables must be at least 2")
         penalty = 10
@@ -187,6 +215,10 @@ class quadraticKnapsackProblem:
 
 
     def print_result(self,response):
+        """
+        Prints the solution of the Quadratic Knapsack problem
+        instance after the sampling
+        """
         lut = response.first.sample
         for i in range(0, len(self.w) - 1, 1):
             if i not in lut:
@@ -206,7 +238,12 @@ class quadraticKnapsackProblem:
 
 
     def solve_classically(self):
-
+        """
+        Takes in input an instance of a Quadratic Knapsack Problem
+        and solves it using a classical brute force algorithm.
+        Then it prints the results and returns the time in microseconds
+        needed to obtain the solution classically 
+        """
         start_time = time.perf_counter()
 
         weights = self.w

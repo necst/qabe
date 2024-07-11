@@ -12,7 +12,10 @@ import time
 
 
 def valid_coloring(edges, coloring):
-
+    """
+    Returns True if the vertices of the edges,
+    for each edge, have different colors, False otherwise.
+    """
     for (u, v) in edges:
         if coloring[u] == coloring[v]:
             return False
@@ -20,7 +23,11 @@ def valid_coloring(edges, coloring):
 
 
 def squared_pol(coeff):
-
+  """
+  Returns a dictionary containing all the terms and
+  their coefficients (as key value pairs) of the squared 
+  polynomial represented by the coefficients' list in input.
+  """
   n = len(coeff) - 1
   squared_coeff = {}
 
@@ -92,7 +99,12 @@ class GraphColoringProblem:
             raise TypeError("Specify the arguments in one of the two formats: (k,None,None,graph,penalty) or (k,edges,num_vertices,None,penalty)")
         
     def prepare(self):
-
+        """
+        Builds the Q matrix manipulating the problem
+        optimization function and constraints. It returns
+        the time needed to perform the matrix construction 
+        in microseconds.
+        """
         start_time = time.perf_counter()
 
         #any positive value for the penalty will do since we do not have an objective function
@@ -160,6 +172,11 @@ class GraphColoringProblem:
 
 
     def sample_advantage(self, num_of_reads, chain_strength = None):
+        """
+        Performs the sampling using the D-Wave
+        using the given number of reads and chian strength
+        Advantage QPU and returns its response
+        """
 
         sampler = EmbeddingComposite(DWaveSampler())
 
@@ -175,7 +192,10 @@ class GraphColoringProblem:
         return sample_set
     
     def sample_hybrid(self):
-
+        """
+        Performs the sampling using the D-Wave
+        hybrid solver and returns its response
+        """
         sampler = LeapHybridSampler(solver={'category': 'hybrid'})
 
         print("Computing results on Hybrid...")
@@ -185,6 +205,12 @@ class GraphColoringProblem:
         return sample_set
     
     def test_advantage(number_of_nodes,colors):
+        """
+        Takes in input the number of nodes and the number of colors
+        to build a random instance of the graph coloring problem
+        given the two numbers. Then it proceeds to solve the problem
+        using the D-Wave Advantage QPU and prints the results.
+        """
         graph = nx.fast_gnp_random_graph(number_of_nodes,0.5)
         problem = GraphColoringProblem(colors,None,None,graph)
         problem.prepare()
@@ -192,6 +218,12 @@ class GraphColoringProblem:
         problem.print_result(response)
 
     def test_hybrid(number_of_nodes,colors):
+        """
+        Takes in input the number of nodes and the number of colors
+        to build a random instance of the graph coloring problem
+        given the two numbers. Then it proceeds to solve the problem
+        using the D-Wave hybrid solver and prints the results.
+        """
         graph = nx.fast_gnp_random_graph(number_of_nodes,0.5)
         problem = GraphColoringProblem(colors,None,None,graph)
         problem.prepare()
@@ -200,6 +232,11 @@ class GraphColoringProblem:
     
 
     def get_problem_from_input():
+            """
+            Builds (and returns) a Graph Coloring problem
+            instance using the parameters obtained from 
+            the input.
+            """
             print("Insert the number of colors: ")
             n_colors = input()
             if( int(n_colors) <= 0):
@@ -227,7 +264,12 @@ class GraphColoringProblem:
             return GraphColoringProblem(n_colors,edges,n_vertices,None)
     
     def solve_classically(self):
-
+        """
+        Takes in input an instance of a Graph Coloring Problem
+        and solves it using a classical brute force algorithm.
+        Then it prints the results and returns the time in microseconds
+        needed to obtain the solution classically 
+        """
         start_time = time.perf_counter()
 
         vertices = set()
@@ -251,6 +293,10 @@ class GraphColoringProblem:
         return (end_time-start_time)*1000000
 
     def print_result(self,response):
+        """
+        Prints the solution of the Graph Coloring problem
+        instance after the sampling
+        """
         lut = response.first.sample
 
         print("The solution is: ")
