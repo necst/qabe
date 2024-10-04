@@ -57,7 +57,7 @@ for i in range(3,11,1):
                 str(sample_set.info['timing']['qpu_access_time']), str(sample_set.info['timing']['qpu_programming_time']), \
                       prepare_time, classical_time))
     
-
+'''
 f.write("TESTING HYBRID1\n")
 f.write("numvar, chainstrength, minenergy, qpuaccesstime, classicaltime\n")
 
@@ -76,3 +76,4 @@ for i in range(3,11,1):
                 (var_number, chain_strength, sample_set.first.energy, \
                 str(sample_set.info['qpu_access_time']), classical_time))
 
+'''
