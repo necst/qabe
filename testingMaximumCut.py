@@ -11,6 +11,7 @@ from dwave.system import EmbeddingComposite
 from dwave.inspector import *
 from dwave.embedding.chimera import *
 from dwave.embedding.chain_strength import *
+from dwave.embedding import uniform_torque_compensation
 import networkx as nx
 
 

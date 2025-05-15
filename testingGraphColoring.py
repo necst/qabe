@@ -11,6 +11,7 @@ from dwave.system import EmbeddingComposite
 from dwave.inspector import *
 from dwave.embedding.chimera import *
 from dwave.embedding.chain_strength import *
+from dwave.embedding import uniform_torque_compensation
 import networkx as nx
 import math
 
@@ -27,6 +28,7 @@ def get_parameters(target_variables, p):
 def calculate_colors(number_of_nodes, p):
     avg_degree = p * (number_of_nodes - 1)
     return math.ceil(avg_degree / 2)
+
 
 f = open("graphColoring.csv", "a")
 f.write("TESTING ADVANTAGE1\n")
@@ -57,6 +59,8 @@ for i in range(3,11,1):
                 str(sample_set.info['timing']['qpu_sampling_time']),\
                 str(sample_set.info['timing']['qpu_access_time']), str(sample_set.info['timing']['qpu_programming_time']), \
                       prepare_time, classical_time))
+
+
 
 '''
 

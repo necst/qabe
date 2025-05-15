@@ -8,6 +8,27 @@ import re
 import itertools
 import random
 import time
+import math
+
+
+def min_slack_variables(coefs, A):
+    """
+    Calculates the minimum number of slack variables required to transform the inequality
+    into an equality by adding slack variables using binary expansion.
+    """
+    max_sum = sum(coefs)
+    diff = max_sum - A
+    
+    if diff < 0:
+        return 0,0
+    
+    # Calculate the number of slack variables required (binary representation of the difference)
+    num_slack_vars = math.ceil(math.log2(diff + 1)) if diff > 0 else 0
+    
+    #binary coefficients
+    slack_var_coeffs = [2**i for i in range(num_slack_vars)]
+    
+    return num_slack_vars, slack_var_coeffs
 
 def squared_pol(coeff):
   """
@@ -89,8 +110,17 @@ class quadraticKnapsackProblem:
 
        #adding slack variables
        boundary = weights.pop()
-       weights.append(1)
-       weights.append(2)
+
+       print(weights)
+       print(boundary)
+
+       slack_vars_number, slack_var_coeffs = min_slack_variables(weights, boundary)
+
+       print(slack_var_coeffs)
+
+       for i in range(slack_vars_number):
+           weights.append(slack_var_coeffs[i])
+
        weights.append(boundary)
        #square the weights obtaining a dictionary
        w_dict = squared_pol(weights)
@@ -135,6 +165,20 @@ class quadraticKnapsackProblem:
                 self.q[(i, j)] *= -1
 
        end_time = time.perf_counter()
+
+       # Define matrix size (15x15 based on the dictionary)
+       size = 7
+
+    # Create a matrix and initialize all values to 0
+       matrix = [[0] * size for _ in range(size)]
+
+    # Populate the matrix based on the dictionary
+       for (i, j), value in self.q.items():
+           matrix[i][j] = value
+
+# Print the matrix in rows and columns
+       for row in matrix:
+           print(row)
 
        return (end_time - start_time)*1000000
 

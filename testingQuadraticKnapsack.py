@@ -11,6 +11,7 @@ from dwave.system import EmbeddingComposite
 from dwave.inspector import *
 from dwave.embedding.chimera import *
 from dwave.embedding.chain_strength import *
+from dwave.embedding import uniform_torque_compensation
 import random
 
 
@@ -63,4 +64,16 @@ for i in range(3,11,1):
     f.write("%d, %f, %f, %s, %f\n" % \
                 (var_number, chain_strength, sample_set.first.energy, \
                 str(sample_set.info['qpu_access_time']), classical_time))
+'''
+'''
+profits = [[0] * 4 for _ in range(4)]
+profits[0] = [2,8,6,10]
+profits[1] = [0,5,2,6]
+profits[2] = [0,0,2,4]
+profits[3] = [0,0,0,4]
+
+weights = [8,6,5,3,16]
+
+problem = quadraticKnapsack.quadraticKnapsackProblem(profits,weights,10)
+prepare_time = problem.prepare()
 '''

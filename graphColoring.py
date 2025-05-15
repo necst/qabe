@@ -151,7 +151,7 @@ class GraphColoringProblem:
                     #adding the corresponding term to the Q matrix
                     self.q[(index,index)] = self.q[(index,index)] + coefficient
 
-
+    
         for edge in self.e:
             v1 = int(edge[0])
             v2 = int(edge[1])
@@ -165,8 +165,8 @@ class GraphColoringProblem:
                 v2_index = (self.k * (v2-1) + k) - 1
 
                 self.q[(v1_index,v2_index)] += penalty 
-        
         end_time = time.perf_counter()
+
 
         return (end_time - start_time)* 1000000
 
